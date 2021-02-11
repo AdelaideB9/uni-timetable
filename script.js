@@ -1,6 +1,7 @@
 function login() {
-    username = document.getElementById('field-username');
-    password = document.getElementById('field-password');
+    username = document.getElementById('field-username').value;
+    password = document.getElementById('field-password').value;
+    console.log(password)
 
     postLogin(username, password).then(data => {
         console.log(data);
@@ -25,7 +26,7 @@ async function postLogin(username, password) {
         },
         redirect: 'follow', // manual, *follow, error
         // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        body: `UID=${username}&PASS=${password}`
+        body: `UID=${encodeURIComponent(username)}&PASS=${encodeURIComponent(password)}`
     });
     return response;
 }

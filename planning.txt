@@ -1,0 +1,12 @@
+Website:
+Will need backend proxy server to handle POST and GET requests (because of CORS)
+This means we will have to handle passwords in plaintext
+It is not possible to obtain the user's existing cookies
+We will instead have to generate our own session ID
+Therefore the user will be logged out of their browser session when they log in to the website (and vice-versa)
+More accessible
+
+Desktop App:
+The POST and GET requests can be handled client side, meaning no backend server and no plaintext passwords :)
+We could potentially decrypt the cookies file and use the user's existing cookies, this is shady though possible
+The user will still be logged in within their browser (provided they were logged in recently)
