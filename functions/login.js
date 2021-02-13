@@ -1,66 +1,57 @@
 const axios = require('axios')
 const cookie = require('cookie')
-
-function filterObjectByArray(obj, arr) {
-	return Object.keys(obj)
-		.filter(key => { 
-			found = false
-			for (val in arr) { if(key.indexOf(arr[val]) > -1) found = true }
-			return found
-		}).reduce((object, key) => {
-			return {
-				...object,
-				[key]: obj[key]
-			}
-		}, {})
-}
-
-function objectToCookieString(cookies) {
-	let cookieString = ""
-	let i = 1
-	for (val in cookies) {
-		cookieString += cookie.serialize(val, cookies[val])
-		if(Object.keys(cookies).length != i)
-			cookieString += '; '
-		
-		i++
-	}
-	return cookieString
-}
+const common = require('./common.js')
+const querystring = require('querystring')
 
 exports.handler = async (event, context) => {
   try {
-	const username = event.queryStringParameters.username
-	const password = event.queryStringParameters.password
+	if (event.httpMethod != 'POST') {
+		return { statusCode: 405, body: 'Method Not Allowed' }
+	}
 	
-	if (!username || !password) throw Error("Did not supply username and password")
+	const params = querystring.parse(event.body)
+	const username = params.username
+	const password = params.password
+	
+	if (!username || !password) throw Error('Did not supply username and password')
 		
 	let result = {
       statusCode: 200,
       body: `Logged in with user ${username}`,
-      headers: {}
+      headers: {
+		  'set-cookie': []
+	  }
     }
 	
 	let cookies = {}
 	const cookieFilter = ['ASPSESSIONID', 'CS92AA']
 	if (event.headers.cookie) {
 		cookies = cookie.parse(event.headers.cookie)
-		cookies = filterObjectByArray(cookies, cookieFilter)
+		cookies = common.filterObjectKeys(cookies, cookieFilter)
 	}
 	
-	if (Object.keys(cookies).length == 0) {
-		// We haven't generated cookies yet, so let's do that
-		res = await axios.get('https://access.adelaide.edu.au/sa/login.asp')
-		if (res.headers['set-cookie']) { 
-			result.headers['set-cookie'] = res.headers['set-cookie'].map(val => {
+	if (Object.keys(cookies).length != 0) {
+		// We need to clear out any old cookies
+		for (val in cookies) {
+			result.headers['set-cookie'].push(cookie.serialize(val, cookies[val], {
+				expires: new Date()
+			}))
+		}
+		cookies = {}
+	}
+	
+	// Now let's generate some new cookies
+	res = await axios.get('https://access.adelaide.edu.au/sa/login.asp')
+	
+	if (res.headers['set-cookie']) { 
+		result.headers['set-cookie'] = result.headers['set-cookie'].concat(
+			res.headers['set-cookie'].map(val => {
 				let thecookie = Object.entries(cookie.parse(val))[0]
 				cookies[thecookie[0]] = thecookie[1]
 				return cookie.serialize(thecookie[0], thecookie[1])
 			})
-		}
+		)
 	}
-	
-	let cookieString = objectToCookieString(cookies)
 	
 	const data = new URLSearchParams()
 	data.append('UID', username)
@@ -70,14 +61,14 @@ exports.handler = async (event, context) => {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',
 			'Referer': 'https://access.adelaide.edu.au/sa/',
-			'Cookie': cookieString,
+			'Cookie': common.objectToCookieString(cookies)
 		}
 	}
-		
+	
 	res = await axios.post('https://access.adelaide.edu.au/sa/login.asp', data, config)
 	
-	if(!res.request._redirectable._isRedirect) {
-		// Did not redirect, meaning we did not successfully log in
+	if(res.request.res.responseUrl != 'https://access.adelaide.edu.au/sa/init.asp') {
+		// Did not redirect to dashboard, meaning we did not successfully log in
 		throw Error("Failed to login, check username and password")
 	}
 	
