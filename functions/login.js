@@ -1,6 +1,5 @@
 const axios = require('axios')
 const cookie = require('cookie')
-const util = require('util')
 
 function filterObjectByArray(obj, arr) {
 	return Object.keys(obj)
@@ -31,6 +30,17 @@ function objectToCookieString(cookies) {
 
 exports.handler = async (event, context) => {
   try {
+	const username = event.queryStringParameters.username
+	const password = event.queryStringParameters.password
+	
+	if (!username || !password) throw Error("Did not supply username and password")
+		
+	let result = {
+      statusCode: 200,
+      body: `Logged in with user ${username}`,
+      headers: {}
+    }
+	
 	let cookies = {}
 	const cookieFilter = ['ASPSESSIONID', 'CS92AA']
 	if (event.headers.cookie) {
@@ -38,12 +48,19 @@ exports.handler = async (event, context) => {
 		cookies = filterObjectByArray(cookies, cookieFilter)
 	}
 	
-	let cookieString = objectToCookieString(cookies)
-	  
-    const username = event.queryStringParameters.username
-	const password = event.queryStringParameters.password
+	if (Object.keys(cookies).length == 0) {
+		// We haven't generated cookies yet, so let's do that
+		res = await axios.get('https://access.adelaide.edu.au/sa/login.asp')
+		if (res.headers['set-cookie']) { 
+			result.headers['set-cookie'] = res.headers['set-cookie'].map(val => {
+				let thecookie = Object.entries(cookie.parse(val))[0]
+				cookies[thecookie[0]] = thecookie[1]
+				return cookie.serialize(thecookie[0], thecookie[1])
+			})
+		}
+	}
 	
-	if (!username || !password) throw Error("Did not supply username and password")
+	let cookieString = objectToCookieString(cookies)
 	
 	const data = new URLSearchParams()
 	data.append('UID', username)
@@ -53,7 +70,7 @@ exports.handler = async (event, context) => {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',
 			'Referer': 'https://access.adelaide.edu.au/sa/',
-			'Cookie': cookieString
+			'Cookie': cookieString,
 		}
 	}
 		
@@ -64,21 +81,9 @@ exports.handler = async (event, context) => {
 		throw Error("Failed to login, check username and password")
 	}
 	
-	let result = {
-      statusCode: 200,
-      body: `Logged in with user ${username}`,
-      headers: {}
-    }
-	
-	if (res.headers['set-cookie']) { 
-		result.headers['set-cookie'] = res.headers['set-cookie'].map(val => {
-			let thecookie = Object.entries(cookie.parse(val))[0]
-			return cookie.serialize(thecookie[0], thecookie[1])
-		})
-	}
-	
     return result
   } catch (err) {
+	console.log(err)
     return { statusCode: 500, body: err.toString() }
   }
 }
