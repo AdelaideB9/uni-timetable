@@ -1,48 +1,71 @@
 <template>
   <div>
     <TopProgress ref="topProgress"></TopProgress>
-    <form @submit.prevent @submit="login()">
-      <input v-model="username" type="text" name="username"><br>
-      <input v-model="password" type="password" name="password"><br>
-      <input type="submit" value="Log in">
-    </form>
-    <p v-if="errorText">{{ errorText }}</p>
+      <div class="container">
+        <form class="box" @submit.prevent="login()">
+          <b-field label="Student ID">
+            <b-input v-model="username" minlength="8" maxlength="8" required="required"></b-input>
+          </b-field>
+
+          <b-field label="Password">
+            <b-input v-model="password" type="password" required="required" password-reveal>
+            </b-input>
+          </b-field>
+
+          <b-button
+            style="margin-top: 20px;"
+            native-type="submit"
+            label="Sign in"
+            type="is-primary is-light"
+          />
+          <b-message v-if="errorText" type="is-danger" style="margin-top: 40px;">{{ errorText }}</b-message>
+        </form>
+      </div>
   </div>
 </template>
 
 <script>
-const qs = require('querystring')
-import TopProgress from '@/components/top-progress.vue'
+const qs = require("querystring");
+import TopProgress from "@/components/top-progress.vue";
 
 export default {
   name: "Login",
   components: {
-    TopProgress
+    TopProgress,
   },
   methods: {
     async login() {
-      this.$refs.topProgress.start()
-      this.errorText = ''
-      let res = await fetch('.netlify/functions/login', {
-        method: 'post',
-        body: qs.stringify({username: this.username, password: this.password})
-      })
+      this.$refs.topProgress.start();
+      this.errorText = "";
+      let res = await fetch(".netlify/functions/login", {
+        method: "post",
+        body: qs.stringify({
+          username: this.username,
+          password: this.password,
+        }),
+      });
 
       if (res.status != 200) {
-        this.errorText = await res.text()
-        this.$refs.topProgress.fail()
+        this.errorText = await res.text();
+        this.$refs.topProgress.fail();
+        this.$buefy.toast.open({
+                    duration: 5000,
+                    message: this.errorText,
+                    position: 'is-top',
+                    type: 'is-danger'
+                })
       } else {
-        this.$refs.topProgress.done()
+        this.$refs.topProgress.done();
       }
-    }
+    },
   },
   data() {
     return {
-      username: '',
-      password: '',
-      errorText: ''
-    }
-  }
+      username: "",
+      password: "",
+      errorText: "",
+    };
+  },
 };
 </script>
 
