@@ -10,9 +10,10 @@
 </template>
 
 <style lang="scss">
+@import "@/assets/overrides";
+@import url("https://use.fontawesome.com/releases/v5.2.0/css/all.css");
+
 * {
-  @import url("https://fonts.googleapis.com/css?family=Roboto%20Mono:400,300,600");
-  font-family: 'Roboto Mono', Helvetica, Arial, sans-serif !important;
   outline: none;
 }
 
