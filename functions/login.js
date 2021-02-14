@@ -1,7 +1,7 @@
 const axios = require('axios')
 const cookie = require('cookie')
 const common = require('./common.js')
-const querystring = require('querystring')
+const qs = require('querystring')
 
 exports.handler = async (event, context) => {
   try {
@@ -9,7 +9,7 @@ exports.handler = async (event, context) => {
 		return { statusCode: 405, body: 'Method Not Allowed' }
 	}
 	
-	const params = querystring.parse(event.body)
+	const params = qs.parse(event.body)
 	const username = params.username
 	const password = params.password
 	
@@ -53,9 +53,7 @@ exports.handler = async (event, context) => {
 		)
 	}
 	
-	const data = new URLSearchParams()
-	data.append('UID', username)
-	data.append('PASS', password)
+	const data = qs.stringify({UID: username, PASS: password})
 	
 	const config = {
 		headers: {
