@@ -1,10 +1,15 @@
 <template>
   <div>
-    <br/>
+    <br />
     <TopProgress ref="topProgress"></TopProgress>
     <div class="container">
       <b-field grouped position="is-centered">
-        <b-button class="control" icon-left="angle-left" @click="changeWeek(-1)"> </b-button>
+        <b-button
+          class="control"
+          icon-left="angle-left"
+          @click="changeWeek(-1)"
+        >
+        </b-button>
         <b-datepicker
           @input="loadTimetable()"
           placeholder="Type or select a date..."
@@ -15,7 +20,12 @@
           editable
         >
         </b-datepicker>
-        <b-button class="control" icon-left="angle-right" @click="changeWeek(1)"> </b-button>
+        <b-button
+          class="control"
+          icon-left="angle-right"
+          @click="changeWeek(1)"
+        >
+        </b-button>
       </b-field>
       <br />
       <!-- <pre>{{ timetable }}</pre> -->
@@ -65,7 +75,6 @@ export default {
     TopProgress,
   },
   methods: {
-
     changeWeek(direction) {
       this.date.setDate(this.date.getDate() + 7 * direction);
       this.$refs.picker.onChange(this.date.toString());
@@ -126,7 +135,7 @@ export default {
     };
   },
   mounted() {
-      this.loadTimetable();
-  }
+    this.loadTimetable();
+  },
 };
 </script>
