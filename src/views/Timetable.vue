@@ -28,7 +28,14 @@
       </b-field>
       <br />
       <!-- <pre>{{ timetable }}</pre> -->
-      <div id="badidea"></div>
+      <!-- <div id="badidea"></div> -->
+
+      <ul>
+        <li v-for="c in classes" :key="c.id">
+          <h3>{{ c.name }}</h3>
+          <p><b> {{ c.time }}, {{ c.duration }} hours</b></p>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -67,7 +74,7 @@ tr {
 <script>
 const seedrandom = require("seedrandom");
 
-let hues = {}
+let hues = {};
 
 export default {
   name: "Timetable",
@@ -77,7 +84,7 @@ export default {
       this.$refs.picker.onChange(this.date.toString());
     },
 
-    async loadTimetable() {
+    async fetchTimetable() {
       this.$parent.$refs.topProgress.start();
       this.errorText = "";
       let url = encodeURIComponent(
@@ -95,53 +102,82 @@ export default {
           position: "is-top",
           type: "is-danger",
         });
-      } else {
-        this.$parent.$refs.topProgress.done();
+        return null;
+      }
 
-        let element = document.createElement("html");
-        res.text().then((body) => {
-          element.innerHTML = body;
+      this.$parent.$refs.topProgress.done();
+      return res.text();
+    },
 
-          let table = element.getElementsByTagName("table")[18];
-          // this.timetable = table;
+    parseTimetable(HTMLtable) {
+      let element = document.createElement("html");
+      element.innerHTML = HTMLtable;
 
-          document.getElementById("badidea").innerHTML = table.outerHTML;
-          // this.timetable = element.getElementsByClassName('tbdr');
+      element.innerHTML = element.getElementsByTagName("table")[18].outerHTML;
 
-          var classes = document.getElementsByClassName("altbdr");
+      // document.getElementById("badidea").innerHTML = table.outerHTML;
 
-          for (var i = 0; i < classes.length; i++) {
-            let name = classes[i]
-              .getElementsByTagName("span")[0]
-              .innerText.split("\n")[1]; // class name (e.g. Music Technology Foundations)
+      let classes = element.getElementsByClassName("altbdr");
 
-            let random_num = new seedrandom(name);
+      let parsedClasses = [];
 
-            for (;;) {
-              let hue = Math.floor(random_num.quick() * 360)
-              let colour = `hsl(${hue.toString()}, 100%, 80%)`
+      for (var i = 0; i < classes.length; i++) {
+        let text = classes[i].getElementsByTagName("span")[0];
 
-              let validColour = true
-              for (const val in hues) {
-                if (val != name && Math.abs(hues[val] - hue) < 20)
-                  validColour = false
-              }
-              
-              if (validColour) {
-                classes[i].style.backgroundColor = colour
-                hues[name] = hue
-                break
-              }
-            }
-          }
+        text.innerHTML = text.innerHTML.replaceAll("<br>", "\n");
+        let textSeperated = text.innerText.split("\n");
+
+        let name = textSeperated[1].trim();
+        console.log(textSeperated);
+        parsedClasses.push({
+          name: name,
+          duration: Number(classes[i].getAttribute("rowspan")) / 2,
+          time: textSeperated[4].split("-")[0].replace("noon", "12:00pm").trim(),
+          course: textSeperated[0].trim(),
+          room: textSeperated[3].trim(),
+          classType: textSeperated[2].split("(")[0].trim(),
+          classNumber: Number(textSeperated[2].split("(")[1].substr(0, 5)),
+          colour: this.genColours(name),
+          id: i,
         });
+      }
+      return parsedClasses;
+    },
+
+    genColours(name) {
+      let random_num = new seedrandom(name);
+
+      for (;;) {
+        let hue = Math.floor(random_num.quick() * 360);
+
+        let validColour = true;
+        for (const val in hues) {
+          if (val == name) {
+            return hues[name];
+          }
+          if (val != name && Math.abs(hues[val] - hue) < 20)
+            validColour = false;
+        }
+
+        if (validColour) {
+          hues[name] = hue;
+          return hue;
+        }
+      }
+    },
+
+    async loadTimetable() {
+      let tb = await this.fetchTimetable();
+      if (tb != null) {
+        this.classes = this.parseTimetable(tb);
       }
     },
   },
   data() {
     return {
       date: new Date(),
-      timetable: ""
+      timetable: "",
+      classes: [],
     };
   },
   mounted() {
