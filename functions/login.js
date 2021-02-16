@@ -4,6 +4,7 @@ const common = require('./common.js')
 const qs = require('querystring')
 
 exports.handler = async (event, context) => {
+	let errorC = 0
 	try {
 		if (event.httpMethod != 'POST') {
 			return { statusCode: 405, body: 'Method Not Allowed' }
@@ -40,19 +41,24 @@ exports.handler = async (event, context) => {
 			cookies = {}
 		}
 
+		errorC = 1
+
 		// Now let's generate some new cookies
 		let res = await axios.get('https://access.adelaide.edu.au/sa/login.asp')
 
 		if (res.headers['set-cookie']) {
-			return { statusCode: 500, body: (typeof res.headers['set-cookie']) + " " + JSON.stringify(res.headers['set-cookie']) }
-			/*result.headers['set-cookie'] = result.headers['set-cookie'].concat(
+			errorC = 2
+			result.headers['set-cookie'] = result.headers['set-cookie'].concat(
 				res.headers['set-cookie'].map(val => {
+					errorC = 3
 					let thecookie = Object.entries(cookie.parse(val))[0]
 					cookies[thecookie[0]] = thecookie[1]
 					return cookie.serialize(thecookie[0], thecookie[1])
 				})
-			)*/
+			)
 		}
+
+		errorC = 4
 
 		const data = qs.stringify({ UID: username, PASS: password })
 
@@ -66,6 +72,8 @@ exports.handler = async (event, context) => {
 
 		res = await axios.post('https://access.adelaide.edu.au/sa/login.asp', data, config)
 
+		errorC = 5
+
 		if (res.request.res.responseUrl != 'https://access.adelaide.edu.au/sa/init.asp') {
 			// Did not redirect to dashboard, meaning we did not successfully log in
 			throw Error("Failed to login, check username and password")
@@ -74,6 +82,6 @@ exports.handler = async (event, context) => {
 		return result
 	} catch (err) {
 		console.log(err)
-		return { statusCode: 500, body: err.toString() }
+		return { statusCode: 500, body: err.toString() + " " + errorC }
 	}
 }
