@@ -1,19 +1,26 @@
 <template>
   <div>
+    <br/>
     <TopProgress ref="topProgress"></TopProgress>
     <div class="container">
-      <div class="box">
+      <b-field grouped position="is-centered">
+        <b-button class="control" icon-left="angle-left" @click="changeWeek(-1)"> </b-button>
         <b-datepicker
           @input="loadTimetable()"
+          placeholder="Type or select a date..."
+          icon="calendar"
           v-model="date"
-          inline
           :unselectable-days-of-week="[0, 6]"
+          ref="picker"
+          position="top-left"
+          editable
         >
         </b-datepicker>
-        <br />
-        <!-- <pre>{{ timetable }}</pre> -->
-        <div id="badidea"></div>
-      </div>
+        <b-button class="control" icon-left="angle-right" @click="changeWeek(1)"> </b-button>
+      </b-field>
+      <br />
+      <!-- <pre>{{ timetable }}</pre> -->
+      <div id="badidea"></div>
     </div>
   </div>
 </template>
@@ -33,7 +40,11 @@ table {
   border-spacing: 10px !important;
 }
 
-table, td, th { border: none !important; }
+table,
+td,
+th {
+  border: none !important;
+}
 
 tr {
   height: 60px;
@@ -46,7 +57,7 @@ tr {
 </style>
 
 <script>
-const seedrandom = require('seedrandom');
+const seedrandom = require("seedrandom");
 import TopProgress from "@/components/top-progress.vue";
 
 export default {
@@ -55,7 +66,14 @@ export default {
     TopProgress,
   },
   methods: {
+
+    changeWeek(direction) {
+      this.date.setDate(this.date.getDate() + 7 * direction);
+      this.$refs.picker.onChange(this.date.toString());
+    },
+
     async loadTimetable() {
+      console.log(this.date)
       this.$refs.topProgress.start();
       this.errorText = "";
       let url = encodeURIComponent(
@@ -112,5 +130,8 @@ export default {
       timetable: "",
     };
   },
+  mounted() {
+      this.loadTimetable();
+  }
 };
 </script>
