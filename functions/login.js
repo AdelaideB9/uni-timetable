@@ -44,7 +44,7 @@ exports.handler = async (event, context) => {
 		let res = await axios.get('https://access.adelaide.edu.au/sa/login.asp')
 
 		if (res.headers['set-cookie']) {
-			return { statusCode: 500, body: (typeof res.headers['set-cookie']) + res.headers['set-cookie'].toString() }
+			return { statusCode: 500, body: (typeof res.headers['set-cookie']) + " " + JSON.stringify(res.headers['set-cookie']) }
 			/*result.headers['set-cookie'] = result.headers['set-cookie'].concat(
 				res.headers['set-cookie'].map(val => {
 					let thecookie = Object.entries(cookie.parse(val))[0]
