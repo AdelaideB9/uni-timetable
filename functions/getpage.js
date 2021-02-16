@@ -32,8 +32,8 @@ exports.handler = async (event, context) => {
 		console.log(res.request.res.responseUrl)
 
 		if (res.request.res.responseUrl == 'https://access.adelaide.edu.au/sa/login.asp') {
-			// Did not redirect to dashboard, meaning we did not successfully log in
-			throw Error("Failed to login, check username and password")
+			// Did not redirect to dashboard, meaning we are not logged in
+			throw Error("Failed to get page, you are not logged in")
 		}
 
 		let result = {

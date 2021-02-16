@@ -41,35 +41,36 @@ exports.handler = async (event, context) => {
 			cookies = {}
 		}
 
-		// Now let's generate some new cookies
-		let res = await axios.get('https://access.adelaide.edu.au/sa/login.asp')
-
-		if (res.headers['set-cookie']) {
-			result.multiValueHeaders['set-cookie'] = result.multiValueHeaders['set-cookie'].concat(
-				res.headers['set-cookie'].map(val => {
-					let thecookie = Object.entries(cookie.parse(val))[0]
-					cookies[thecookie[0]] = thecookie[1]
-					return cookie.serialize(thecookie[0], thecookie[1], { path: '/' })
-				})
-			)
-		}
-
 		const data = qs.stringify({ UID: username, PASS: password })
 
-		const config = {
+		var config = {
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
-				'Referer': 'https://access.adelaide.edu.au/sa/',
-				'Cookie': common.objectToCookieString(cookies)
+				'Referer': 'https://access.adelaide.edu.au/sa/'
+			},
+			maxRedirects: 0,
+			validateStatus: status => {
+				return status >= 200 && status < 303
 			}
 		}
 
-		res = await axios.post('https://access.adelaide.edu.au/sa/login.asp', data, config)
+		let res = await axios.post('https://access.adelaide.edu.au/sa/login.asp', data, config)
 
-		if (res.request.res.responseUrl != 'https://access.adelaide.edu.au/sa/init.asp') {
+		if (res.headers.location != 'https://access.adelaide.edu.au/sa/init.asp' || !res.headers['set-cookie']) {
 			// Did not redirect to dashboard, meaning we did not successfully log in
 			throw Error("Failed to login, check username and password")
 		}
+
+		result.multiValueHeaders['set-cookie'] = result.multiValueHeaders['set-cookie'].concat(
+			res.headers['set-cookie'].map(val => {
+				let thecookie = Object.entries(cookie.parse(val))[0]
+				cookies[thecookie[0]] = thecookie[1]
+				return cookie.serialize(thecookie[0], thecookie[1], { path: '/' })
+			})
+		)
+
+		config.headers['Cookie'] = common.objectToCookieString(cookies)
+		res = await axios.get('https://access.adelaide.edu.au/sa/init.asp', config)
 
 		return result
 	} catch (err) {

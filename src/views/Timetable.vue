@@ -12,7 +12,6 @@
           v-model="date"
           :unselectable-days-of-week="[0, 6]"
           ref="picker"
-          position="top-left"
           editable
         >
         </b-datepicker>
@@ -73,7 +72,6 @@ export default {
     },
 
     async loadTimetable() {
-      console.log(this.date)
       this.$refs.topProgress.start();
       this.errorText = "";
       let url = encodeURIComponent(
@@ -81,9 +79,7 @@ export default {
           this.date.getMonth() + 1
         }/${this.date.getFullYear()}`
       );
-      let res = await fetch(".netlify/functions/getpage?url=" + url, {
-        method: "post",
-      });
+      let res = await fetch(".netlify/functions/getpage?url=" + url);
       if (res.status == 500) {
         this.errorText = await res.text();
         this.$refs.topProgress.fail();
@@ -101,7 +97,6 @@ export default {
           element.innerHTML = body;
 
           let table = element.getElementsByTagName("table")[18];
-          console.log(table);
           // this.timetable = table;
 
           document.getElementById("badidea").innerHTML = table.outerHTML;
