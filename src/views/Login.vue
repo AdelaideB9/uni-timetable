@@ -1,6 +1,5 @@
 <template>
   <div>
-    <TopProgress ref="topProgress"></TopProgress>
     <div class="container">
       <form class="box" @submit.prevent="login()">
         <b-field label="Student ID">
@@ -38,19 +37,15 @@
 
 <script>
 const qs = require("querystring");
-import TopProgress from "@/components/top-progress.vue";
 
 export default {
   name: "Login",
-  components: {
-    TopProgress,
-  },
   beforeCreate() {
     if (this.$store.state.isLoggedIn) this.$router.push({ name: "Timetable" });
   },
   methods: {
     async login() {
-      this.$refs.topProgress.start();
+      this.$parent.$refs.topProgress.start();
       this.errorText = "";
       let res = await fetch(".netlify/functions/login", {
         method: "post",
@@ -62,7 +57,7 @@ export default {
 
       if (res.status != 200) {
         this.errorText = await res.text();
-        this.$refs.topProgress.fail();
+        this.$parent.$refs.topProgress.fail();
         this.$buefy.toast.open({
           duration: 5000,
           message: this.errorText,
@@ -70,7 +65,7 @@ export default {
           type: "is-danger",
         });
       } else {
-        this.$refs.topProgress.done();
+        this.$parent.$refs.topProgress.done();
         this.$router.push({ name: "Timetable" });
       }
     },

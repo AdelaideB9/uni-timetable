@@ -1,7 +1,6 @@
 <template>
   <div>
     <br />
-    <TopProgress ref="topProgress"></TopProgress>
     <div class="container">
       <b-field grouped position="is-centered">
         <b-button
@@ -67,13 +66,9 @@ tr {
 
 <script>
 const seedrandom = require("seedrandom");
-import TopProgress from "@/components/top-progress.vue";
 
 export default {
   name: "Timetable",
-  components: {
-    TopProgress,
-  },
   methods: {
     changeWeek(direction) {
       this.date.setDate(this.date.getDate() + 7 * direction);
@@ -81,7 +76,7 @@ export default {
     },
 
     async loadTimetable() {
-      this.$refs.topProgress.start();
+      this.$parent.$refs.topProgress.start();
       this.errorText = "";
       let url = encodeURIComponent(
         `student/Week.asp?term=4110&career=UGRD&dt=${this.date.getDate()}/${
@@ -91,7 +86,7 @@ export default {
       let res = await fetch(".netlify/functions/getpage?url=" + url);
       if (res.status == 500) {
         this.errorText = await res.text();
-        this.$refs.topProgress.fail();
+        this.$parent.$refs.topProgress.fail();
         this.$buefy.toast.open({
           duration: 5000,
           message: this.errorText,
@@ -99,7 +94,7 @@ export default {
           type: "is-danger",
         });
       } else {
-        this.$refs.topProgress.done();
+        this.$parent.$refs.topProgress.done();
 
         let element = document.createElement("html");
         res.text().then((body) => {
