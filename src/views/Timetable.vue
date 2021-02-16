@@ -67,6 +67,8 @@ tr {
 <script>
 const seedrandom = require("seedrandom");
 
+let hues = {}
+
 export default {
   name: "Timetable",
   methods: {
@@ -114,10 +116,23 @@ export default {
               .innerText.split("\n")[1]; // class name (e.g. Music Technology Foundations)
 
             let random_num = new seedrandom(name);
-            let hue = Math.floor(random_num.quick() * 360);
-            let colour = `hsl(${hue.toString()}, 100%, 80%)`;
 
-            classes[i].style.backgroundColor = colour;
+            for (;;) {
+              let hue = Math.floor(random_num.quick() * 360)
+              let colour = `hsl(${hue.toString()}, 100%, 80%)`
+
+              let validColour = true
+              for (const val in hues) {
+                if (val != name && Math.abs(hues[val] - hue) < 20)
+                  validColour = false
+              }
+              
+              if (validColour) {
+                classes[i].style.backgroundColor = colour
+                hues[name] = hue
+                break
+              }
+            }
           }
         });
       }
@@ -126,7 +141,7 @@ export default {
   data() {
     return {
       date: new Date(),
-      timetable: "",
+      timetable: ""
     };
   },
   mounted() {
