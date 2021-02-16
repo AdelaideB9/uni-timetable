@@ -1,6 +1,6 @@
 const axios = require('axios')
 const cookie = require('cookie')
-const common = require('./common.js')
+const common = require('../common.js')
 const qs = require('querystring')
 
 exports.handler = async (event, context) => {
@@ -34,7 +34,8 @@ exports.handler = async (event, context) => {
 			// We need to clear out any old cookies
 			for (const val in cookies) {
 				result.multiValueHeaders['set-cookie'].push(cookie.serialize(val, cookies[val], {
-					expires: new Date()
+					expires: new Date(),
+					path: '/'
 				}))
 			}
 			cookies = {}
@@ -48,7 +49,7 @@ exports.handler = async (event, context) => {
 				res.headers['set-cookie'].map(val => {
 					let thecookie = Object.entries(cookie.parse(val))[0]
 					cookies[thecookie[0]] = thecookie[1]
-					return cookie.serialize(thecookie[0], thecookie[1])
+					return cookie.serialize(thecookie[0], thecookie[1], { path: '/' })
 				})
 			)
 		}

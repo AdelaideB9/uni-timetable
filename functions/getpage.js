@@ -1,6 +1,6 @@
 const axios = require('axios')
 const cookie = require('cookie')
-const common = require('./common.js')
+const common = require('../common.js')
 
 exports.handler = async (event, context) => {
 	try {

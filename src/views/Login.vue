@@ -33,6 +33,10 @@ export default {
   components: {
     TopProgress,
   },
+  beforeCreate() {
+    if (this.$store.state.isLoggedIn)
+      this.$router.push({ name: 'Timetable' })
+  },
   methods: {
     async login() {
       this.$refs.topProgress.start();
@@ -56,6 +60,7 @@ export default {
                 })
       } else {
         this.$refs.topProgress.done();
+        this.$router.push({ name: 'Timetable' })
       }
     },
   },
