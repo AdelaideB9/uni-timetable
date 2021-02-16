@@ -28,12 +28,15 @@ exports.handler = async (event, context) => {
 		}
 
 		let res = await axios.get('https://access.adelaide.edu.au/sa/' + url, config)
-		// console.log(res)
-		console.log(res.request.res.responseUrl)
 
 		if (res.request.res.responseUrl == 'https://access.adelaide.edu.au/sa/login.asp') {
 			// Did not redirect to dashboard, meaning we are not logged in
-			throw Error("Failed to get page, you are not logged in")
+			throw Error("Redirected, you are not logged in")
+		}
+
+		if (res.data.indexOf('An error occurred') > -1) {
+			// Some error occured on Access Adelaide
+			throw Error('Generic error, clear your cookies')
 		}
 
 		let result = {
