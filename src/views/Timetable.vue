@@ -29,7 +29,7 @@ export default {
     async loadTimetable() {
       this.$refs.topProgress.start();
       this.errorText = "";
-      let url = `student/Week.asp?term=4110&career=UGRD&dt=${this.date.getDate()}/${this.date.getMonth() + 1}/${this.date.getFullYear()}`;
+      let url = encodeURIComponent(`student/Week.asp?term=4110&career=UGRD&dt=${this.date.getDate()}/${this.date.getMonth() + 1}/${this.date.getFullYear()}`);
       let res = await fetch(".netlify/functions/getpage?url=" + url, { method: "post" });
       if (res.status == 500) {
         this.errorText = await res.text();
@@ -42,7 +42,12 @@ export default {
         });
       } else {
         this.$refs.topProgress.done();
-        res.text().then(body => this.timetable = body)
+
+        let element = document.createElement('html');
+        res.text().then(body => this.timetable = body);
+        // res.text().then(body => element.innerHTML = body);
+        console.log(element);
+        // this.timetable = element.getElementsByTagName('table')[0];
       }
     },
   },

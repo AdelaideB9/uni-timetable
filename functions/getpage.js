@@ -16,7 +16,7 @@ exports.handler = async (event, context) => {
 	
 	let cookieString = common.objectToCookieString(cookies)
 	
-	let url = event.queryStringParameters.url
+	let url = event.queryStringParameters.url;
 	
 	if (!url) throw Error('Did not supply URL')
 	
@@ -28,7 +28,8 @@ exports.handler = async (event, context) => {
 	}
 	
 	res = await axios.get('https://access.adelaide.edu.au/sa/' + url, config)
-	console.log(res)
+	// console.log(res)
+	console.log(res.request.res.responseUrl)
 	
 	if(res.request.res.responseUrl == 'https://access.adelaide.edu.au/sa/login.asp') {
 		// Did not redirect to dashboard, meaning we did not successfully log in
