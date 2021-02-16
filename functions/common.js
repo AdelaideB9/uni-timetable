@@ -2,10 +2,10 @@ const cookie = require('cookie')
 
 exports.filterObjectKeys = function (obj, arr) {
 	return Object.keys(obj)
-		.filter(key => { 
-			for (i in arr) { 
-				if(key.indexOf(arr[i]) > -1) 
-					return true 
+		.filter(key => {
+			for (const i in arr) {
+				if (key.indexOf(arr[i]) > -1)
+					return true
 			}
 			return false
 		}).reduce((object, key) => {
@@ -17,16 +17,16 @@ exports.filterObjectKeys = function (obj, arr) {
 }
 
 exports.objectHasKeys = function (obj, arr) {
-	for (i in arr) {
-		if (!exports.objectHasKey(obj, arr[i])) 
+	for (const i in arr) {
+		if (!exports.objectHasKey(obj, arr[i]))
 			return false
 	}
 	return true
 }
 
 exports.objectHasKey = function (obj, str) {
-	for (val in obj) { 
-		if(val.indexOf(str) > -1) 
+	for (const val in obj) {
+		if (val.indexOf(str) > -1)
 			return true
 	}
 	return false
@@ -35,11 +35,11 @@ exports.objectHasKey = function (obj, str) {
 exports.objectToCookieString = function (cookies) {
 	let cookieString = ""
 	let i = 1
-	for (val in cookies) {
+	for (const val in cookies) {
 		cookieString += cookie.serialize(val, cookies[val])
-		if(Object.keys(cookies).length != i)
+		if (Object.keys(cookies).length != i)
 			cookieString += '; '
-		
+
 		i++
 	}
 	return cookieString
