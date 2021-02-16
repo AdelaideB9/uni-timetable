@@ -10,13 +10,14 @@
           :unselectable-days-of-week="[0, 6]"
         >
         </b-datepicker>
+        <br>
+        <pre>{{ timetable }}</pre>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-const qs = require("querystring");
 import TopProgress from "@/components/top-progress.vue";
 
 export default {
@@ -28,11 +29,8 @@ export default {
     async loadTimetable() {
       this.$refs.topProgress.start();
       this.errorText = "";
-      let res = await fetch(".netlify/functions/getpage", {
-        method: "post",
-        body: qs.stringify({
-          url: `student/Week.asp?term=4110&career=UGRD&dt=${this.date.getDate()}/${this.date.getMonth() + 1}/${this.date.getFullYear()}`}),
-      });
+      let url = `student/Week.asp?term=4110&career=UGRD&dt=${this.date.getDate()}/${this.date.getMonth() + 1}/${this.date.getFullYear()}`;
+      let res = await fetch(".netlify/functions/getpage?url=" + url, { method: "post" });
       if (res.status == 500) {
         this.errorText = await res.text();
         this.$refs.topProgress.fail();
@@ -43,14 +41,15 @@ export default {
           type: "is-danger",
         });
       } else {
-        console.log(res);
         this.$refs.topProgress.done();
+        res.text().then(body => this.timetable = body)
       }
     },
   },
   data() {
     return {
       date: new Date(),
+      timetable: ""
     };
   },
 };
