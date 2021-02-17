@@ -19,6 +19,11 @@
   outline: none;
 }
 
+html, body {
+  height: 100%;
+  overflow: auto;
+}
+
 #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
