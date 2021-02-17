@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="container">
+    <div class="login-container">
       <form class="box" @submit.prevent="login()">
         <b-field label="Student ID">
           <b-input
@@ -34,6 +34,15 @@
     </div>
   </div>
 </template>
+
+<style>
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>
 
 <script>
 const qs = require("querystring");
