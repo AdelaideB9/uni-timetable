@@ -37,10 +37,13 @@
 
 <style>
 .login-container {
-  height: 100vh;
+  height: 90vh;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.box {
+  width: 350px;
 }
 </style>
 
