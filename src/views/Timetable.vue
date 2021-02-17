@@ -31,19 +31,16 @@
       <!-- <div id="badidea"></div> -->
 
       <table>
-        <tr>
-          
+        <tr v-for="i in 26" :key="i">
+          <td v-for="j in 5" :key="j" :rowspan="classAndRowspan(26 * (j - 1) + i - 1)">
+            <div
+              :style="'background-color: hsl(' + currentClass.colour + ', 100%, 80%)'" v-if="currentClass">
+              <p class="card-header-title">{{ currentClass.course }}</p>
+              <p>{{ currentClass.name }}</p>
+            </div>
+          </td>
         </tr>
       </table>
-
-      <ul>
-        <li v-for="c in classes" :key="c.id">
-          <h3>{{ c.name }}</h3>
-          <p>
-            <b> {{ c.time }}, {{ c.duration }}</b>
-          </p>
-        </li>
-      </ul>
     </div>
   </div>
 </template>
@@ -123,11 +120,9 @@ export default {
 
       element.innerHTML = element.getElementsByTagName("table")[18].outerHTML;
 
-      // document.getElementById("badidea").innerHTML = table.outerHTML;
-
       let classes = element.getElementsByClassName("altbdr");
 
-      let parsedClasses = [];
+      let parsedClasses = {};
 
       for (var i = 0; i < classes.length; i++) {
         let text = classes[i].getElementsByTagName("span")[0];
@@ -139,8 +134,9 @@ export default {
 
         let day = classes[i].cellIndex - 1;
         let hour = classes[i].parentNode.rowIndex - 1;
+        let id = 26 * day + hour;
 
-        parsedClasses.push({
+        parsedClasses[id] = {
           name: name,
           duration: Number(classes[i].getAttribute("rowspan")),
           time: [day, hour],
@@ -150,7 +146,7 @@ export default {
           classNumber: Number(textSeperated[2].split("(")[1].substr(0, 5)),
           colour: this.genColours(name),
           id: 26 * day + hour,
-        });
+        };
       }
       return parsedClasses;
     },
@@ -177,6 +173,15 @@ export default {
       }
     },
 
+    classAndRowspan(i) {
+      if (this.classes[i]) {
+        this.currentClass = this.classes[i];
+        return this.classes[i].duration;
+      }
+      this.currentClass = null;
+      return 1;
+    },
+
     async loadTimetable() {
       let tb = await this.fetchTimetable();
       if (tb != null) {
@@ -187,8 +192,8 @@ export default {
   data() {
     return {
       date: new Date(),
-      timetable: "",
-      classes: [],
+      classes: {},
+      currentClass: null,
     };
   },
   mounted() {
