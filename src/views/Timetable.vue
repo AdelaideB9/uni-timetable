@@ -131,8 +131,8 @@ export default {
         console.log(textSeperated);
         parsedClasses.push({
           name: name,
-          duration: Number(classes[i].getAttribute("rowspan")) / 2,
-          time: textSeperated[4].split("-")[0].replace("noon", "12:00pm").trim(),
+          duration: Number(classes[i].getAttribute("rowspan")),
+          time: [classes[i].cellIndex, classes[i].parentNode.rowIndex],
           course: textSeperated[0].trim(),
           room: textSeperated[3].trim(),
           classType: textSeperated[2].split("(")[0].trim(),
