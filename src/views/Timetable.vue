@@ -30,10 +30,18 @@
       <!-- <pre>{{ timetable }}</pre> -->
       <!-- <div id="badidea"></div> -->
 
+      <table>
+        <tr>
+          
+        </tr>
+      </table>
+
       <ul>
         <li v-for="c in classes" :key="c.id">
           <h3>{{ c.name }}</h3>
-          <p><b> {{ c.time }}, {{ c.duration }} hours</b></p>
+          <p>
+            <b> {{ c.time }}, {{ c.duration }}</b>
+          </p>
         </li>
       </ul>
     </div>
@@ -128,17 +136,20 @@ export default {
         let textSeperated = text.innerText.split("\n");
 
         let name = textSeperated[1].trim();
-        console.log(textSeperated);
+
+        let day = classes[i].cellIndex - 1;
+        let hour = classes[i].parentNode.rowIndex - 1;
+
         parsedClasses.push({
           name: name,
           duration: Number(classes[i].getAttribute("rowspan")),
-          time: [classes[i].cellIndex, classes[i].parentNode.rowIndex],
+          time: [day, hour],
           course: textSeperated[0].trim(),
           room: textSeperated[3].trim(),
           classType: textSeperated[2].split("(")[0].trim(),
           classNumber: Number(textSeperated[2].split("(")[1].substr(0, 5)),
           colour: this.genColours(name),
-          id: i,
+          id: 26 * day + hour,
         });
       }
       return parsedClasses;
