@@ -33,10 +33,14 @@
       <table>
         <tr v-for="i in 26" :key="i">
           <td v-for="j in 5" :key="26 * (j-1) + i-1" :rowspan="classAndRowspan(26 * j + i - 27)">
-            <div
-              :style="'background-color: hsl(' + classes[26 * j + i - 27].colour + ', 100%, 80%)'" v-if="currentClass">
-              <p class="card-header-title">{{ classes[26 * j + i - 27].course }}</p>
-              <p>{{ classes[26 * j + i - 27].name }}</p>
+            <div v-if="classes[26 * j + i - 27]" :set="c = classes[26 * j + i - 27]">
+              <div
+                :style="'background-color: hsl(' + c.colour + ', 100%, 80%)'"
+                 v-if="currentClass"
+                 @click="t">
+                <p>{{ c.course }}</p>
+                <p>{{ c.name }}</p>
+              </div>
             </div>
           </td>
         </tr>
@@ -149,6 +153,9 @@ export default {
         };
       }
       return parsedClasses;
+    },
+    t(e) {
+      console.log(e);
     },
 
     genColours(name) {
