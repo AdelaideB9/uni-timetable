@@ -32,11 +32,11 @@
 
       <table>
         <tr v-for="i in 26" :key="i">
-          <td v-for="j in 5" :key="j" :rowspan="classAndRowspan(26 * (j - 1) + i - 1)">
+          <td v-for="j in 5" :key="26 * (j-1) + i-1" :rowspan="classAndRowspan(26 * j + i - 27)">
             <div
-              :style="'background-color: hsl(' + currentClass.colour + ', 100%, 80%)'" v-if="currentClass">
-              <p class="card-header-title">{{ currentClass.course }}</p>
-              <p>{{ currentClass.name }}</p>
+              :style="'background-color: hsl(' + classes[26 * j + i - 27].colour + ', 100%, 80%)'" v-if="currentClass">
+              <p class="card-header-title">{{ classes[26 * j + i - 27].course }}</p>
+              <p>{{ classes[26 * j + i - 27].name }}</p>
             </div>
           </td>
         </tr>
@@ -193,7 +193,6 @@ export default {
     return {
       date: new Date(),
       classes: {},
-      currentClass: null,
     };
   },
   mounted() {
