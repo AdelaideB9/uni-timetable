@@ -31,7 +31,18 @@
       <!-- <div id="badidea"></div> -->
 
       <table>
+        <tr>
+          <th class="time"></th>
+          <th>Monday</th>
+          <th>Tuesday</th>
+          <th>Wednesday</th>
+          <th>Thursday</th>
+          <th>Friday</th>
+        </tr>       
         <tr v-for="i in 26" :key="i">
+          <td class="time">
+            {{ timeIndexToTime(i) }}
+          </td>
           <td
             v-for="j in 5"
             :key="26 * (j - 1) + i - 1"
@@ -48,8 +59,8 @@
               "
             >
               <div class="event" v-if="currentClass" @click="t">
-                <p>{{ c.course }}</p>
-                <p>{{ c.name }}</p>
+                <p><b>{{ c.course }}</b></p>
+                <p>{{ c.classType }}</p>
               </div>
             </div>
           </td>
@@ -61,7 +72,7 @@
 
 <style lang="scss">
 table {
-  table-layout: fixed;
+  // table-layout: fixed;
   width: 100%;
   height: 100%;
   font-size: 12px;
@@ -82,8 +93,16 @@ table {
     0 0px 0 1px rgba(10, 10, 10, 0.02);
 }
 
+.time {
+  max-width: "50%" !important;
+}
+
+th {
+  text-align: center !important;
+}
+
 tr {
-  height: 50px !important;
+  height: 30px !important;
 }
 </style>
 
@@ -98,6 +117,17 @@ export default {
     changeWeek(direction) {
       this.date.setDate(this.date.getDate() + 7 * direction);
       this.$refs.picker.onChange(this.date.toString());
+    },
+
+    timeIndexToTime(i) {
+      if (i % 2 == 0) {
+        return ''
+      } else if (i <= 8) {
+        return String(8 + (i-1)/2) + 'am'
+      } else if (i >= 11) {
+        return String((8+(i-1)/2) % 12) + 'pm'
+      }
+      return '12pm'
     },
 
     async fetchTimetable() {
