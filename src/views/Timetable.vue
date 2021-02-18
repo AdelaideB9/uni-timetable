@@ -38,7 +38,7 @@
           <th>Wednesday</th>
           <th>Thursday</th>
           <th>Friday</th>
-        </tr>       
+        </tr>
         <tr v-for="i in 26" :key="i">
           <td class="time">
             {{ timeIndexToTime(i) }}
@@ -52,14 +52,17 @@
               v-if="classes[26 * j + i - 27]"
               :set="(c = classes[26 * j + i - 27])"
               class="event-container"
+              :key="26 * j + i - 27"
               :style="
                 'background-color: hsl(' +
                 classes[26 * j + i - 27].colour +
                 ', 100%, 80%)'
               "
             >
-              <div class="event" v-if="currentClass" @click="t">
-                <p><b>{{ c.course }}</b></p>
+              <div class="event" @click="t(26 * j + i - 27)">
+                <p>
+                  <b>{{ c.course }}</b>
+                </p>
                 <p>{{ c.classType }}</p>
               </div>
             </div>
@@ -107,6 +110,7 @@ tr {
 </style>
 
 <script>
+import ClassPopup from "@/components/ClassPopup.vue";
 const seedrandom = require("seedrandom");
 
 let hues = {};
@@ -121,13 +125,13 @@ export default {
 
     timeIndexToTime(i) {
       if (i % 2 == 0) {
-        return ''
+        return "";
       } else if (i <= 8) {
-        return String(8 + (i-1)/2) + 'am'
+        return String(8 + (i - 1) / 2) + "am";
       } else if (i >= 11) {
-        return String((8+(i-1)/2) % 12) + 'pm'
+        return String((8 + (i - 1) / 2) % 12) + "pm";
       }
-      return '12pm'
+      return "12pm";
     },
 
     async fetchTimetable() {
@@ -191,8 +195,18 @@ export default {
       }
       return parsedClasses;
     },
-    t(e) {
-      console.log(e);
+    t(i) {
+      let c = this.classes[i];
+      console.log(c);
+
+      this.$buefy.modal.open({
+        parent: this,
+        props: {event: c},
+        component: ClassPopup,
+        hasModalCard: true,
+        customClass: "custom-class custom-class-2",
+        trapFocus: true,
+      });
     },
 
     genColours(name) {
