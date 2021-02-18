@@ -32,12 +32,22 @@
 
       <table>
         <tr v-for="i in 26" :key="i">
-          <td v-for="j in 5" :key="26 * (j-1) + i-1" :rowspan="classAndRowspan(26 * j + i - 27)">
-            <div v-if="classes[26 * j + i - 27]" :set="c = classes[26 * j + i - 27]">
-              <div
-                :style="'background-color: hsl(' + c.colour + ', 100%, 80%)'"
-                 v-if="currentClass"
-                 @click="t">
+          <td
+            v-for="j in 5"
+            :key="26 * (j - 1) + i - 1"
+            :rowspan="classAndRowspan(26 * j + i - 27)"
+          >
+            <div
+              v-if="classes[26 * j + i - 27]"
+              :set="(c = classes[26 * j + i - 27])"
+              class="event-container"
+              :style="
+                'background-color: hsl(' +
+                classes[26 * j + i - 27].colour +
+                ', 100%, 80%)'
+              "
+            >
+              <div class="event" v-if="currentClass" @click="t">
                 <p>{{ c.course }}</p>
                 <p>{{ c.name }}</p>
               </div>
@@ -56,27 +66,24 @@ table {
   height: 100%;
   font-size: 12px;
 
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-
   border-collapse: unset !important;
   border-spacing: 10px !important;
 }
 
-table,
-td,
-th {
-  border: none !important;
+.event {
+  height: inherit;
+  padding: 10%;
+}
+
+.event-container {
+  height: 100%;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
+    0 0px 0 1px rgba(10, 10, 10, 0.02);
 }
 
 tr {
-  height: 60px;
-}
-
-.altbdr {
-  padding: 20px;
-  border-radius: 10px;
+  height: 50px !important;
 }
 </style>
 
