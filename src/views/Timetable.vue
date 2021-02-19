@@ -136,10 +136,16 @@ export default {
       let mod='pm'
       if (i % 2 == 0) {
         return "";
-      } else if (i <= 24-2*this.earliestTime) {
+      }
+      if (i + this.earliestTime -1 < 24) {
         mod='am';
       }
-      return String((this.earliestTime + i-2) % 12 + 1) + mod;
+      return String(((i + this.earliestTime - 1)/2 - 1 )% 12 + 1) + mod
+
+      // } else if (i < 24-2*this.earliestTime) {
+      //   mod='am';
+      // }
+      // return String((this.earliestTime + i-2) % 12 + 1) + mod;
     },
 
     async fetchTimetable() {
@@ -184,7 +190,7 @@ export default {
 
       let parsedClasses = {};
 
-      this.earliestTime = 9;
+      this.earliestTime = 18;
 
       for (var i = 0; i < classes.length; i++) {
         let text = classes[i].getElementsByTagName("span")[0];
@@ -199,7 +205,7 @@ export default {
         let id = 26 * day + hour;
 
         if (textSeperated[4].split('-')[0] == '8:00am ') {
-          this.earliestTime = 8;
+          this.earliestTime = 16;
         }
 
         parsedClasses[id] = {
@@ -216,7 +222,7 @@ export default {
     },
     t(i) {
       let c = this.classes[i];
-      
+
       this.$buefy.modal.open({
         parent: this,
         props: { event: c },
@@ -280,7 +286,7 @@ export default {
     return {
       date: new Date(),
       classes: {},
-      earliestTime: 0,
+      earliestTime: 18,
       message: "",
     };
   },
