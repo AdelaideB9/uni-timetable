@@ -133,14 +133,13 @@ export default {
     },
 
     timeIndexToTime(i) {
+      let mod='pm'
       if (i % 2 == 0) {
         return "";
-      } else if (i <= 8) {
-        return String(8 + (i - 1) / 2) + "am";
-      } else if (i >= 11) {
-        return String((8 + (i - 1) / 2) % 12) + "pm";
+      } else if (i <= 24-2*this.earliestTime) {
+        mod='am';
       }
-      return "12pm";
+      return String((this.earliestTime + i-2) % 12 + 1) + mod;
     },
 
     async fetchTimetable() {
@@ -185,6 +184,8 @@ export default {
 
       let parsedClasses = {};
 
+      this.earliestTime = 9;
+
       for (var i = 0; i < classes.length; i++) {
         let text = classes[i].getElementsByTagName("span")[0];
 
@@ -197,24 +198,25 @@ export default {
         let hour = classes[i].parentNode.rowIndex - 1;
         let id = 26 * day + hour;
 
+        if (textSeperated[4].split('-')[0] == '8:00am ') {
+          this.earliestTime = 8;
+        }
+
         parsedClasses[id] = {
           name: name,
           duration: Number(classes[i].getAttribute("rowspan")),
-          time: [day, hour],
           course: textSeperated[0].trim(),
           room: textSeperated[3].trim(),
           classType: textSeperated[2].split("(")[0].trim(),
           classNumber: Number(textSeperated[2].split("(")[1].substr(0, 5)),
           colour: this.genColours(name),
-          id: 26 * day + hour,
         };
       }
       return parsedClasses;
     },
     t(i) {
       let c = this.classes[i];
-      console.log(c);
-
+      
       this.$buefy.modal.open({
         parent: this,
         props: { event: c },
@@ -278,6 +280,7 @@ export default {
     return {
       date: new Date(),
       classes: {},
+      earliestTime: 0,
       message: "",
     };
   },
