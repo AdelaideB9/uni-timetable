@@ -52,7 +52,7 @@
           <th>Thursday</th>
           <th>Friday</th>
         </tr>
-        <tr v-for="i in 26" :key="i">
+        <tr v-for="i in 24 + 18 - earliestTime" :key="i">
           <td class="time">
             {{ timeIndexToTime(i) }}
           </td>
@@ -141,11 +141,6 @@ export default {
         mod='am';
       }
       return String(((i + this.earliestTime - 1)/2 - 1 )% 12 + 1) + mod
-
-      // } else if (i < 24-2*this.earliestTime) {
-      //   mod='am';
-      // }
-      // return String((this.earliestTime + i-2) % 12 + 1) + mod;
     },
 
     async fetchTimetable() {
