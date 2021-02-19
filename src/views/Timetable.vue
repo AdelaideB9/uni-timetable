@@ -2,15 +2,16 @@
   <div>
     <br />
     <div class="container">
-      <b-dropdown aria-role="list" style="float: left;">
+      <b-dropdown aria-role="list" style="float: left">
         <template #trigger>
           <b-button icon-left="bars" />
         </template>
 
         <!-- <b-dropdown-item aria-role="listitem">Toggle Semester</b-dropdown-item> -->
-        <b-dropdown-item aria-role="listitem" @input="logout()"
-          >Logout</b-dropdown-item
-        >
+        <b-dropdown-item aria-role="listitem" @click="logout()" value="logout">
+          <b-icon icon="sign-out-alt"></b-icon>
+          Logout
+        </b-dropdown-item>
       </b-dropdown>
       <b-field grouped position="is-centered">
         <b-button
@@ -263,12 +264,14 @@ export default {
     },
 
     logout() {
-      var allCookies = document.cookie.split(";");
+      console.log("test")
+      let allCookies = document.cookie.split(";");
       allCookies.forEach(
         (cookie) =>
           (document.cookie = cookie + "=;expires=" + new Date(0).toUTCString())
       );
       window.location.replace("/login");
+      console.log("test")
     },
   },
   data() {
