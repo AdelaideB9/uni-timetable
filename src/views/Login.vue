@@ -26,10 +26,8 @@
           native-type="submit"
           label="Sign in"
           type="is-primary is-light"
+          :loading="loading"
         />
-        <b-message v-if="errorText" type="is-danger" style="margin-top: 40px">{{
-          errorText
-        }}</b-message>
       </form>
     </div>
   </div>
@@ -55,14 +53,15 @@ export default {
   },
   methods: {
     login() {
-      this.$store.dispatch('login', {username: this.username, password: this.password})
+      this.loading = true
+      this.$store.dispatch('login', {username: this.username, password: this.password}).then(() => { this.loading = false })
     },
   },
   data() {
     return {
       username: "",
       password: "",
-      errorText: "",
+      loading: false
     };
   },
 };
