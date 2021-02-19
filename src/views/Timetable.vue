@@ -2,6 +2,16 @@
   <div>
     <br />
     <div class="container">
+      <b-dropdown aria-role="list" style="float: left;">
+        <template #trigger>
+          <b-button icon-left="bars" />
+        </template>
+
+        <!-- <b-dropdown-item aria-role="listitem">Toggle Semester</b-dropdown-item> -->
+        <b-dropdown-item aria-role="listitem" @input="logout()"
+          >Logout</b-dropdown-item
+        >
+      </b-dropdown>
       <b-field grouped position="is-centered">
         <b-button
           class="control"
@@ -27,8 +37,10 @@
         </b-button>
       </b-field>
       <br />
-      <!-- <pre>{{ timetable }}</pre> -->
-      <!-- <div id="badidea"></div> -->
+
+      <b-message v-if="message" type="is-danger">
+        {{ message }}
+      </b-message>
 
       <table>
         <tr>
@@ -86,7 +98,7 @@ table {
 
 .event {
   height: inherit;
-  padding: 10%;
+  padding: 5%;
 }
 
 .event-container {
@@ -94,10 +106,6 @@ table {
   border-radius: 0.25rem;
   box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
     0 0px 0 1px rgba(10, 10, 10, 0.02);
-}
-
-.time {
-  max-width: "50%" !important;
 }
 
 th {
@@ -163,6 +171,13 @@ export default {
       let element = document.createElement("html");
       element.innerHTML = HTMLtable;
 
+      let message = element.getElementsByTagName("p")[0].innerText;
+      if (message.startsWith("Note:")) {
+        this.message = message;
+      } else {
+        this.message = "";
+      }
+
       element.innerHTML = element.getElementsByTagName("table")[18].outerHTML;
 
       let classes = element.getElementsByClassName("altbdr");
@@ -201,7 +216,7 @@ export default {
 
       this.$buefy.modal.open({
         parent: this,
-        props: {event: c},
+        props: { event: c },
         component: ClassPopup,
         hasModalCard: true,
         customClass: "custom-class custom-class-2",
@@ -246,11 +261,21 @@ export default {
         this.classes = this.parseTimetable(tb);
       }
     },
+
+    logout() {
+      var allCookies = document.cookie.split(";");
+      allCookies.forEach(
+        (cookie) =>
+          (document.cookie = cookie + "=;expires=" + new Date(0).toUTCString())
+      );
+      window.location.replace("/login");
+    },
   },
   data() {
     return {
       date: new Date(),
       classes: {},
+      message: "",
     };
   },
   mounted() {
