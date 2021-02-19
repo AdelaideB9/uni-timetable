@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Timetable from '../views/Timetable.vue'
-import store from '../store/index.js'
+import store from '@/store'
 import cookie from 'cookie'
-import common from '../../common.js'
+import common from '/common.js'
 
 Vue.use(VueRouter)
 

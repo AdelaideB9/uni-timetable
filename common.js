@@ -44,3 +44,8 @@ exports.objectToCookieString = function (cookies) {
 	}
 	return cookieString
 }
+
+exports.angularDistance = function (a, b) {
+	let phi = Math.abs(b - a) % 360
+	return phi > 180 ? 360 - phi : phi
+}

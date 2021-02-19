@@ -6,7 +6,7 @@
       <router-link to="/login">Login</router-link> |
       <router-link to="/timetable">Timetable</router-link>
     </div> -->
-    <TopProgress ref="topProgress"></TopProgress>
+    <TopProgress :trickleSpeed="50"></TopProgress>
     <router-view/>
   </div>
 </template>
@@ -46,7 +46,7 @@ html, body {
 </style>
 
 <script>
-import TopProgress from "@/components/top-progress.vue";
+import TopProgress from "@/components/TopProgress.vue";
 
 export default {
   name: "App",

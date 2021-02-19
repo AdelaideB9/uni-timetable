@@ -8,7 +8,7 @@
         </template>
 
         <!-- <b-dropdown-item aria-role="listitem">Toggle Semester</b-dropdown-item> -->
-        <b-dropdown-item aria-role="listitem" @click="logout()" value="logout">
+        <b-dropdown-item aria-role="listitem" @click="$store.dispatch('logout')" value="logout">
           <b-icon icon="sign-out-alt"></b-icon>
           Logout
         </b-dropdown-item>
@@ -63,7 +63,6 @@
           >
             <div
               v-if="classes[26 * j + i - 27]"
-              :set="(c = classes[26 * j + i - 27])"
               class="event-container"
               :key="26 * j + i - 27"
               :style="
@@ -74,9 +73,9 @@
             >
               <div class="event" @click="t(26 * j + i - 27)">
                 <p>
-                  <b>{{ c.course }}</b>
+                  <b>{{ classes[26 * j + i - 27].course }}</b>
                 </p>
-                <p>{{ c.classType }}</p>
+                <p>{{ classes[26 * j + i - 27].classType }}</p>
               </div>
             </div>
           </td>
@@ -103,6 +102,7 @@ table {
 }
 
 .event-container {
+  cursor: pointer;
   height: 100%;
   border-radius: 0.25rem;
   box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
@@ -120,6 +120,8 @@ tr {
 
 <script>
 import ClassPopup from "@/components/ClassPopup.vue";
+import http from '@/services/http'
+import common from '/common'
 const seedrandom = require("seedrandom");
 
 let hues = {};
@@ -144,28 +146,19 @@ export default {
     },
 
     async fetchTimetable() {
-      this.$parent.$refs.topProgress.start();
-      this.errorText = "";
       let url = encodeURIComponent(
         `student/Week.asp?term=4110&career=UGRD&dt=${this.date.getDate()}/${
           this.date.getMonth() + 1
         }/${this.date.getFullYear()}`
       );
-      let res = await fetch(".netlify/functions/getpage?url=" + url);
-      if (res.status == 500) {
-        this.errorText = await res.text();
-        this.$parent.$refs.topProgress.fail();
-        this.$buefy.toast.open({
-          duration: 5000,
-          message: this.errorText,
-          position: "is-top",
-          type: "is-danger",
-        });
-        return null;
-      }
 
-      this.$parent.$refs.topProgress.done();
-      return res.text();
+      try {
+        let res = await http.get(".netlify/functions/getpage?url=" + url)
+        return res.data
+      } catch (err) {
+        this.$store.dispatch('logout')
+        return null
+      }
     },
 
     parseTimetable(HTMLtable) {
@@ -236,10 +229,10 @@ export default {
 
         let validColour = true;
         for (const val in hues) {
-          if (val == name) {
+          if (val == name) 
             return hues[name];
-          }
-          if (val != name && Math.abs(hues[val] - hue) < 20)
+            
+          if (val != name && common.angularDistance(hues[val], hue) < 50)
             validColour = false;
         }
 
@@ -264,18 +257,7 @@ export default {
       if (tb != null) {
         this.classes = this.parseTimetable(tb);
       }
-    },
-
-    logout() {
-      console.log("test")
-      let allCookies = document.cookie.split(";");
-      allCookies.forEach(
-        (cookie) =>
-          (document.cookie = cookie + "=;expires=" + new Date(0).toUTCString())
-      );
-      window.location.replace("/login");
-      console.log("test")
-    },
+    }
   },
   data() {
     return {
