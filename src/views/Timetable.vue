@@ -71,8 +71,8 @@
               :key="26 * j + i - 27"
               :style="
                 'background-color: hsl(' +
-                classes[26 * j + i - 27].colour +
-                ', 100%, 80%)'
+                  classes[26 * j + i - 27].colour +
+                  ', 100%, 80%)'
               "
             >
               <div class="event" @click="t(26 * j + i - 27)">
@@ -163,9 +163,8 @@ export default {
 
     async fetchTimetable() {
       let url = encodeURIComponent(
-        `student/Week.asp?term=4110&career=UGRD&dt=${this.date.getDate()}/${
-          this.date.getMonth() + 1
-        }/${this.date.getFullYear()}`
+        `student/Week.asp?term=4110&career=UGRD&dt=${this.date.getDate()}/${this.date.getMonth() +
+          1}/${this.date.getFullYear()}`
       );
 
       try {
@@ -219,7 +218,7 @@ export default {
           room: textSeperated[3].trim(),
           classType: textSeperated[2].split("(")[0].trim(),
           classNumber: Number(textSeperated[2].split("(")[1].substr(0, 5)),
-          colour: this.genColours(name),
+          colour: this.genColours(name)
         };
       }
       return parsedClasses;
@@ -233,7 +232,7 @@ export default {
         component: ClassPopup,
         hasModalCard: true,
         customClass: "custom-class custom-class-2",
-        trapFocus: true,
+        trapFocus: true
       });
     },
 
@@ -272,18 +271,18 @@ export default {
       if (tb != null) {
         this.classes = this.parseTimetable(tb);
       }
-    },
+    }
   },
   data() {
     return {
       date: new Date(),
       classes: {},
       earliestTime: 18,
-      message: "",
+      message: ""
     };
   },
   mounted() {
     this.loadTimetable();
-  },
+  }
 };
 </script>

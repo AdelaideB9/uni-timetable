@@ -29,7 +29,7 @@ let queue = (() => {
       fn(next);
     }
   }
-  return (fn) => {
+  return fn => {
     pending.push(fn);
     if (pending.length === 1) {
       next();
@@ -45,54 +45,54 @@ export default {
       progress: 0,
       opacity: 1,
       status: null,
-      isPaused: false,
+      isPaused: false
     };
   },
   created() {
-    window.progressBar = this
+    window.progressBar = this;
   },
   props: {
     speed: {
       type: Number,
-      default: 350,
+      default: 350
     },
     color: {
       type: String,
-      default: "#29d",
+      default: "#29d"
     },
     colorShadow: String,
     errorColor: {
       type: String,
-      default: "#f44336",
+      default: "#f44336"
     },
     trickle: {
       type: Boolean,
-      default: true,
+      default: true
     },
     trickleSpeed: {
       type: Number,
-      default: 250,
+      default: 250
     },
     easing: {
       type: String,
-      default: "linear",
+      default: "linear"
     },
     height: {
       type: Number,
-      default: 3,
+      default: 3
     },
     minimum: {
       type: Number,
-      default: 0.8,
+      default: 0.8
     },
     maximum: {
       type: Number,
-      default: 97.5,
+      default: 97.5
     },
     zIndex: {
       type: Number,
-      default: 9999,
-    },
+      default: 9999
+    }
   },
   computed: {
     progressColor() {
@@ -115,7 +115,7 @@ export default {
         backgroundColor: this.progressColor,
         transition: `all ${this.speed}ms ${this.easing}`,
         opacity: `${this.opacity}`,
-        zIndex: `${this.zIndex}`,
+        zIndex: `${this.zIndex}`
       };
     },
     pegStyle() {
@@ -127,9 +127,9 @@ export default {
         height: "100%",
         opacity: this.progress ? "1" : "0",
         boxShadow: `0 0 10px ${this.boxShadow}, 0 0 5px ${this.boxShadow}`,
-        transform: "rotate(3deg) translate(0px, -4px)",
+        transform: "rotate(3deg) translate(0px, -4px)"
       };
-    },
+    }
   },
   methods: {
     beforeEnter() {
@@ -179,7 +179,7 @@ export default {
         o = 0;
       }
       this.status = o === 100 ? null : o;
-      queue((next) => {
+      queue(next => {
         this.progress = o;
         if (o === 100) {
           setTimeout(() => {
@@ -230,7 +230,7 @@ export default {
     fail() {
       this.error = true;
       this.done();
-    },
-  },
+    }
+  }
 };
 </script>

@@ -53,9 +53,13 @@ export default {
   },
   methods: {
     login() {
-      this.loading = true
-      this.$store.dispatch('login', {username: this.username, password: this.password}).then(() => { this.loading = false })
-    },
+      this.loading = true;
+      this.$store
+        .dispatch("login", { username: this.username, password: this.password })
+        .then(() => {
+          this.loading = false;
+        });
+    }
   },
   data() {
     return {
@@ -63,9 +67,8 @@ export default {
       password: "",
       loading: false
     };
-  },
+  }
 };
 </script>
 
-<style lang="sass" scoped>
-</style>
+<style lang="sass" scoped></style>

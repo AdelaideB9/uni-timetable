@@ -7,7 +7,7 @@
       <router-link to="/timetable">Timetable</router-link>
     </div> -->
     <TopProgress :trickleSpeed="50"></TopProgress>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
@@ -19,7 +19,8 @@
   outline: none;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   overflow: auto;
 }
@@ -32,7 +33,7 @@ html, body {
 
 #nav {
   padding: 30px;
-    text-align: center;
+  text-align: center;
 
   a {
     font-weight: bold;
@@ -51,7 +52,7 @@ import TopProgress from "@/components/TopProgress.vue";
 export default {
   name: "App",
   components: {
-    TopProgress,
+    TopProgress
   }
-}
+};
 </script>
