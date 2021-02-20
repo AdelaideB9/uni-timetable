@@ -8,7 +8,11 @@
         </template>
 
         <!-- <b-dropdown-item aria-role="listitem">Toggle Semester</b-dropdown-item> -->
-        <b-dropdown-item aria-role="listitem" @click="$store.dispatch('logout')" value="logout">
+        <b-dropdown-item
+          aria-role="listitem"
+          @click="$store.dispatch('logout')"
+          value="logout"
+        >
           <b-icon icon="sign-out-alt"></b-icon>
           Logout
         </b-dropdown-item>
@@ -72,6 +76,9 @@
               "
             >
               <div class="event" @click="t(26 * j + i - 27)">
+                <!-- <p class="hide-on-mobile">
+                  <b>{{ c.name }}</b>
+                </p> -->
                 <p>
                   <b>{{ classes[26 * j + i - 27].course }}</b>
                 </p>
@@ -97,12 +104,12 @@ table {
 }
 
 .event {
+  cursor: pointer;
   height: inherit;
   padding: 5%;
 }
 
 .event-container {
-  cursor: pointer;
   height: 100%;
   border-radius: 0.25rem;
   box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
@@ -116,12 +123,21 @@ th {
 tr {
   height: 30px !important;
 }
+
+@media only screen and (max-device-width: 480px) {
+  .show-on-mobile {
+    display: block;
+  }
+  .hide-on-mobile {
+    display: none;
+  }
+}
 </style>
 
 <script>
 import ClassPopup from "@/components/ClassPopup.vue";
-import http from '@/services/http'
-import common from '/common'
+import http from "@/services/http";
+import common from "/common";
 const seedrandom = require("seedrandom");
 
 let hues = {};
@@ -135,14 +151,14 @@ export default {
     },
 
     timeIndexToTime(i) {
-      let mod='pm'
+      let mod = "pm";
       if (i % 2 == 0) {
         return "";
       }
-      if (i + this.earliestTime -1 < 24) {
-        mod='am';
+      if (i + this.earliestTime - 1 < 24) {
+        mod = "am";
       }
-      return String(((i + this.earliestTime - 1)/2 - 1 )% 12 + 1) + mod
+      return String((((i + this.earliestTime - 1) / 2 - 1) % 12) + 1) + mod;
     },
 
     async fetchTimetable() {
@@ -153,11 +169,11 @@ export default {
       );
 
       try {
-        let res = await http.get(".netlify/functions/getpage?url=" + url)
-        return res.data
+        let res = await http.get(".netlify/functions/getpage?url=" + url);
+        return res.data;
       } catch (err) {
-        this.$store.dispatch('logout')
-        return null
+        this.$store.dispatch("logout");
+        return null;
       }
     },
 
@@ -192,7 +208,7 @@ export default {
         let hour = classes[i].parentNode.rowIndex - 1;
         let id = 26 * day + hour;
 
-        if (textSeperated[4].split('-')[0] == '8:00am ') {
+        if (textSeperated[4].split("-")[0] == "8:00am ") {
           this.earliestTime = 16;
         }
 
@@ -229,9 +245,8 @@ export default {
 
         let validColour = true;
         for (const val in hues) {
-          if (val == name) 
-            return hues[name];
-            
+          if (val == name) return hues[name];
+
           if (val != name && common.angularDistance(hues[val], hue) < 50)
             validColour = false;
         }
@@ -257,7 +272,7 @@ export default {
       if (tb != null) {
         this.classes = this.parseTimetable(tb);
       }
-    }
+    },
   },
   data() {
     return {
