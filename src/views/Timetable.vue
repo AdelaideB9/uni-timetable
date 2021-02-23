@@ -7,7 +7,6 @@
           <b-button icon-left="bars" />
         </template>
 
-        <!-- <b-dropdown-item aria-role="listitem">Toggle Semester</b-dropdown-item> -->
         <b-dropdown-item
           aria-role="listitem"
           @click="$store.dispatch('logout')"
@@ -47,47 +46,14 @@
         {{ message }}
       </b-message>
 
-      <table>
-        <tr>
-          <th class="time"></th>
-          <th>Monday</th>
-          <th>Tuesday</th>
-          <th>Wednesday</th>
-          <th>Thursday</th>
-          <th>Friday</th>
-        </tr>
-        <tr v-for="i in 24 + 18 - earliestTime" :key="i">
-          <td class="time">
-            {{ timeIndexToTime(i) }}
-          </td>
-          <td
-            v-for="j in 5"
-            :key="26 * (j - 1) + i - 1"
-            :rowspan="classAndRowspan(26 * j + i - 27)"
-          >
-            <div
-              v-if="classes[26 * j + i - 27]"
-              class="event-container"
-              :key="26 * j + i - 27"
-              :style="
-                'background-color: hsl(' +
-                  classes[26 * j + i - 27].colour +
-                  ', 100%, 80%)'
-              "
-            >
-              <div class="event" @click="t(26 * j + i - 27)">
-                <!-- <p class="hide-on-mobile">
-                  <b>{{ c.name }}</b>
-                </p> -->
-                <p>
-                  <b>{{ classes[26 * j + i - 27].course }}</b>
-                </p>
-                <p>{{ classes[26 * j + i - 27].classType }}</p>
-              </div>
-            </div>
-          </td>
-        </tr>
-      </table>
+      <TB
+        :table="classes"
+        :cellHeight="60"
+        :cellWidth="180"
+        :earliestTime="earliestTime"
+        :latestTime="latestTime"
+      >
+      </TB>
     </div>
   </div>
 </template>
@@ -136,6 +102,7 @@ tr {
 
 <script>
 import ClassPopup from "@/components/ClassPopup.vue";
+import TB from "@/components/Timetable.vue";
 import http from "@/services/http";
 import common from "/common";
 const seedrandom = require("seedrandom");
@@ -163,8 +130,9 @@ export default {
 
     async fetchTimetable() {
       let url = encodeURIComponent(
-        `student/Week.asp?term=4110&career=UGRD&dt=${this.date.getDate()}/${this.date.getMonth() +
-          1}/${this.date.getFullYear()}`
+        `student/Week.asp?term=4110&career=UGRD&dt=${this.date.getDate()}/${
+          this.date.getMonth() + 1
+        }/${this.date.getFullYear()}`
       );
 
       try {
@@ -191,9 +159,8 @@ export default {
 
       let classes = element.getElementsByClassName("altbdr");
 
-      let parsedClasses = {};
-
-      this.earliestTime = 18;
+      let parsedClasses = [];
+      
 
       for (var i = 0; i < classes.length; i++) {
         let text = classes[i].getElementsByTagName("span")[0];
@@ -202,24 +169,35 @@ export default {
         let textSeperated = text.innerText.split("\n");
 
         let name = textSeperated[1].trim();
+        let startTime = textSeperated[4]
+          .split("-")[0]
+          .replace("noon", "12:00am")
+          .split(":00");
 
-        let day = classes[i].cellIndex - 1;
-        let hour = classes[i].parentNode.rowIndex - 1;
-        let id = 26 * day + hour;
+        startTime =
+          startTime[1].trim() == "am"
+            ? Number(startTime[0])
+            : Number(startTime[0]) + 12;
 
-        if (textSeperated[4].split("-")[0] == "8:00am ") {
-          this.earliestTime = 16;
+        if (i == 0) {
+          this.earliestTime = startTime;
+        }
+        let duration = Number(classes[i].getAttribute("rowspan")) / 2;
+        if (this.latestTime < startTime+duration) {
+          this.latestTime = startTime+duration
         }
 
-        parsedClasses[id] = {
+        parsedClasses.push({
           name: name,
-          duration: Number(classes[i].getAttribute("rowspan")),
+          time: startTime,
+          day: classes[i].cellIndex - 1,
+          duration: duration,
           course: textSeperated[0].trim(),
           room: textSeperated[3].trim(),
-          classType: textSeperated[2].split("(")[0].trim(),
+          type: textSeperated[2].split("(")[0].trim(),
           classNumber: Number(textSeperated[2].split("(")[1].substr(0, 5)),
-          colour: this.genColours(name)
-        };
+          colour: this.genColours(name),
+        });
       }
       return parsedClasses;
     },
@@ -232,7 +210,7 @@ export default {
         component: ClassPopup,
         hasModalCard: true,
         customClass: "custom-class custom-class-2",
-        trapFocus: true
+        trapFocus: true,
       });
     },
 
@@ -257,32 +235,33 @@ export default {
       }
     },
 
-    classAndRowspan(i) {
-      if (this.classes[i]) {
-        this.currentClass = this.classes[i];
-        return this.classes[i].duration;
-      }
-      this.currentClass = null;
-      return 1;
-    },
-
     async loadTimetable() {
       let tb = await this.fetchTimetable();
       if (tb != null) {
         this.classes = this.parseTimetable(tb);
+        console.log(this.classes);
       }
-    }
+    },
   },
   data() {
     return {
       date: new Date(),
-      classes: {},
-      earliestTime: 18,
-      message: ""
+      classes: [],
+      earliestTime: 0,
+      latestTime: 0,
+      message: "",
+      test: [
+        { name: "Test", day: 0, time: 7, colour: "0000FF", duration: 2 },
+        { name: "Lachlan", day: 0, time: 6, colour: "FF00FF", duration: 1 },
+        { name: "Hello", day: 2, time: 10, colour: "001FFF", duration: 1 },
+      ],
     };
   },
   mounted() {
     this.loadTimetable();
-  }
+  },
+  components: {
+    TB,
+  },
 };
 </script>
