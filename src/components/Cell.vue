@@ -1,12 +1,23 @@
 <template>
-  <div :style="`
+  <div
+    :style="`
+    box-sizing: border-box;
     height: ${height * rowSpan}px; 
-    width: ${width}px; 
     top: ${y * height}px;
-    left: ${x * width}px;
-    background-color: hsl(${colour}, 100%, 80%);`"
+    left: calc(${(x - 1) * 19}% + 5%);
+    padding: 10px;`"
   >
-    <slot />
+    <div
+      :style="`
+      width: 90%;
+      background-color: hsl(${colour}, 100%, 80%);
+      border-radius: 0.25rem;
+      height: calc(100% - 20px);`"
+    >
+      <div style="padding: 5px;">
+        <slot />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -25,7 +36,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    div {
-        position: absolute;
-    }
+div {
+  position: absolute;
+}
 </style>

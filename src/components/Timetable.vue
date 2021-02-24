@@ -1,18 +1,35 @@
 <template>
   <div class="table">
     <div v-for="time in latestTime - earliestTime + 1" :key="time">
-      <Cell :x="0" :y="time" :width="cellWidth" :height="cellHeight">
-        <p>{{ to12HourTime(time + earliestTime - 1) }}</p></Cell
+      <Cell
+        :x="0"
+        :y="time"
+        :width="cellWidth"
+        :height="cellHeight"
+        class="time-col"
       >
+        <p>{{ to12HourTime(time + earliestTime - 1) }}</p>
+      </Cell>
     </div>
-    <div v-for="(day, i) in days" :key="day">
-      <Cell :x="i+1" :y="0" :width="cellWidth" :height="cellHeight">
-        <p><b>{{ day }}</b></p>
+    <div
+      v-for="(day, i) in days"
+      :key="day"
+    >
+      <Cell
+        :x="i + 1"
+        :y="0"
+        :width="cellWidth"
+        :height="cellHeight"
+        class="day-col day"
+      >
+        <p>
+          <b>{{ day }}</b>
+        </p>
       </Cell>
     </div>
     <div v-for="(event, i) in table" :key="i">
       <Cell
-        class="eventCell"
+        class="day-col"
         :x="event.day + 1"
         :y="event.time - earliestTime + 1"
         :width="cellWidth"
@@ -43,12 +60,14 @@ export default {
   },
   data() {
     return {
-      days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
     };
   },
   methods: {
     to12HourTime(time) {
-      return time >= 12 ? String((time - 1)%12+1)+'pm' : String(time)+'am';
+      return time >= 12
+        ? String(((time - 1) % 12) + 1) + "pm"
+        : String(time) + "am";
     },
   },
   components: {
@@ -59,21 +78,19 @@ export default {
 
 <style lang="scss" scoped>
 .table {
-  width: 80%;
-  height: 1500px;
+  height: 700px;
   position: relative;
-}
-
-.eventCell {
-    border-radius: 0.25rem;
-    text-align: left;
-}
-
-p {
-  text-align: center;
   font-size: 12px;
 }
 
+.time-col {
+  width: 5%;
+  left: 0 !important;
+}
 
+.day p { text-align: center; }
 
+.day-col {
+  width: 19%;
+}
 </style>
