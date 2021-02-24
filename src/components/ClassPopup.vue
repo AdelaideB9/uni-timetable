@@ -31,11 +31,8 @@ export default {
   props: { event: Object },
   methods: {
     timeToText(time) {
-      if (time / 2 <= 1) {
-        return String(time / 2) + " hour";
-      }
-      return String(time / 2) + " hours";
-    }
+      return time <= 1 ? String(time) + ' hour' : String(time) + ' hours';
+    },
   },
   computed: {
     c: function() {
