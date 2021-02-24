@@ -131,10 +131,9 @@ export default {
         }
 
         let day = classes[i].cellIndex - 1;
-        day =
-          startTime - prevSpans[day].index < prevSpans[day].span
-            ? day + 1
-            : day;
+        while (startTime - prevSpans[day].index < prevSpans[day].span){
+          day++;
+        }
         prevSpans[day] = { span: duration, index: startTime };
 
         parsedClasses.push({
