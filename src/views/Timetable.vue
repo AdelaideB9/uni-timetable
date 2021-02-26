@@ -40,10 +40,6 @@
         </b-button>
       </b-field>
 
-      <b-message v-if="message" type="is-danger">
-        {{ message }}
-      </b-message>
-
       <WeekTimetable
         :table="timetable.classes"
         :earliestTime="timetable.earliestTime"
@@ -58,6 +54,7 @@
 import WeekTimetable from "@/components/WeekTimetable.vue";
 import http from "@/services/http";
 import common from "/common";
+import { ToastProgrammatic as Toast } from "buefy";
 const seedrandom = require("seedrandom");
 
 let hues = {};
@@ -72,8 +69,9 @@ export default {
 
     async fetchTimetable() {
       let url = encodeURIComponent(
-        `student/Week.asp?term=4110&career=UGRD&dt=${this.date.getDate()}/${this.date.getMonth() +
-          1}/${this.date.getFullYear()}`
+        `student/Week.asp?term=4110&career=UGRD&dt=${this.date.getDate()}/${
+          this.date.getMonth() + 1
+        }/${this.date.getFullYear()}`
       );
 
       try {
@@ -90,10 +88,19 @@ export default {
       element.innerHTML = HTMLtable;
 
       let message = element.getElementsByTagName("p")[0].innerText;
+      let toast_message;
       if (message.startsWith("Note:")) {
-        this.message = message;
-      } else {
-        this.message = "";
+        if (message.includes("is invalid or outside the selected semester")) {
+          toast_message = "There are no scheduled classes on this date";
+        } else {
+          toast_message = message;
+        }
+        Toast.open({
+          duration: 5000,
+          message: toast_message,
+          position: "is-bottom",
+          type: "is-danger",
+        });
       }
 
       element.innerHTML = element.getElementsByTagName("table")[18].outerHTML;
@@ -112,6 +119,7 @@ export default {
         let textSeperated = text.innerText.split("\n");
 
         let name = textSeperated[1].trim();
+        name = name.slice(-3) == " UG" ? name.substr(0, name.length - 3) : name; // removes 'UG' from the end of course names
         let startTime = textSeperated[4]
           .split("-")[0]
           .replace("noon", "12:00am")
@@ -131,7 +139,7 @@ export default {
         }
 
         let day = classes[i].cellIndex - 1;
-        while (startTime - prevSpans[day].index < prevSpans[day].span){
+        while (startTime - prevSpans[day].index < prevSpans[day].span) {
           day++;
         }
         prevSpans[day] = { span: duration, index: startTime };
@@ -145,13 +153,13 @@ export default {
           room: textSeperated[3].trim(),
           type: textSeperated[2].split("(")[0].trim(),
           classNumber: Number(textSeperated[2].split("(")[1].substr(0, 5)),
-          colour: this.genColours(name)
+          colour: this.genColours(name),
         });
       }
       return {
         classes: parsedClasses,
         earliestTime: earliestTime,
-        latestTime: latestTime
+        latestTime: latestTime,
       };
     },
 
@@ -181,38 +189,19 @@ export default {
       if (tb != null) {
         this.timetable = this.parseTimetable(tb);
       }
-    }
+    },
   },
   data() {
     return {
       date: new Date(),
       timetable: { classes: [], earliestTime: 0, latestTime: 0 },
-      message: ""
     };
   },
   mounted() {
     this.loadTimetable();
   },
   components: {
-    WeekTimetable
-  }
+    WeekTimetable,
+  },
 };
 </script>
-
-<style lang="scss">
-@media only screen and (max-device-width: 480px) {
-  .show-on-mobile {
-    display: block;
-  }
-  .hide-on-mobile {
-    display: none;
-  }
-}
-.container {
-  height: inherit;
-}
-
-#timetable {
-  height: inherit;
-}
-</style>

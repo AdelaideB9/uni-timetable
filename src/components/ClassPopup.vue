@@ -31,14 +31,14 @@ export default {
   props: { event: Object },
   methods: {
     timeToText(time) {
-      return time <= 1 ? String(time) + ' hour' : String(time) + ' hours';
+      return time <= 1 ? String(time) + " hour" : String(time) + " hours";
     },
   },
   computed: {
-    c: function() {
+    c: function () {
       return this.event;
-    }
-  }
+    },
+  },
 };
 </script>
 
