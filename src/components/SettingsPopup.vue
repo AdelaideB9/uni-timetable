@@ -27,18 +27,7 @@
 
 <script>
 export default {
-  name: "ClassPopup",
-  props: { event: Object },
-  methods: {
-    timeToText(time) {
-      return time <= 1 ? String(time) + " hour" : String(time) + " hours";
-    },
-  },
-  computed: {
-    c: function () {
-      return this.event;
-    },
-  },
+  name: "SettingsPopup",
 };
 </script>
 

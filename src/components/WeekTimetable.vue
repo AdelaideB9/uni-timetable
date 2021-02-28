@@ -37,7 +37,7 @@
       <p class="show-on-mobile hide-on-desktop">
         <b>{{ event.course }}</b>
       </p>
-      <p>{{ event.type }}</p>
+      <p>{{ event.type }} <span class="hide-on-mobile">({{ event.room[0] }})</span></p>
     </div>
   </div>
 </template>

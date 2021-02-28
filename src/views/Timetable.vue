@@ -5,7 +5,10 @@
         <template #trigger>
           <b-button icon-left="bars" />
         </template>
-
+        <b-dropdown-item aria-role="listitem">
+          <b-icon icon="cog"></b-icon>
+          Settings
+        </b-dropdown-item>
         <b-dropdown-item
           aria-role="listitem"
           @click="$store.dispatch('logout')"
@@ -52,6 +55,7 @@
 
 <script>
 import WeekTimetable from "@/components/WeekTimetable.vue";
+// import SettingsPopup from "@/components/SettingsPopup.vue";
 import http from "@/services/http";
 import common from "/common";
 import { ToastProgrammatic as Toast } from "buefy";
@@ -68,8 +72,10 @@ export default {
     },
 
     async fetchTimetable() {
+      // let term = (this.date.getFullYear() - 1980) * 100 + (this.date.getMonth() < 6 ? 10 : 20);
+      let term = 4110;
       let url = encodeURIComponent(
-        `student/Week.asp?term=4110&career=UGRD&dt=${this.date.getDate()}/${
+        `student/Week.asp?term=${term}&career=UGRD&dt=${this.date.getDate()}/${
           this.date.getMonth() + 1
         }/${this.date.getFullYear()}`
       );
@@ -150,7 +156,7 @@ export default {
           day: day,
           duration: duration,
           course: textSeperated[0].trim(),
-          room: textSeperated[3].trim(),
+          room: textSeperated[3].trim().split("/"),
           type: textSeperated[2].split("(")[0].trim(),
           classNumber: Number(textSeperated[2].split("(")[1].substr(0, 5)),
           colour: this.genColours(name),
@@ -190,6 +196,16 @@ export default {
         this.timetable = this.parseTimetable(tb);
       }
     },
+
+    // openSettingsMenu() {
+    //   this.$buefy.modal.open({
+    //     parent: this,
+    //     component: SettingsPopup,
+    //     hasModalCard: true,
+    //     customClass: "custom-class custom-class-2",
+    //     trapFocus: true,
+    //   });
+    // },
   },
   data() {
     return {
@@ -202,6 +218,7 @@ export default {
   },
   components: {
     WeekTimetable,
+    // SettingsPopup,
   },
 };
 </script>
