@@ -27,7 +27,7 @@
 
 <script>
 export default {
-  name: "SettingsPopup",
+  name: "SettingsPopup"
 };
 </script>
 

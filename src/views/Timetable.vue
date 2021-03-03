@@ -62,6 +62,11 @@ import { ToastProgrammatic as Toast } from "buefy";
 const seedrandom = require("seedrandom");
 
 let hues = {};
+let careers = {
+  Undergraduate: "UGRD",
+  "Non Award": "NAWD",
+  "Undergraduate Law (LLB)": "ULAW",
+};
 
 export default {
   name: "Timetable",
@@ -71,11 +76,39 @@ export default {
       this.$refs.picker.onChange(this.date.toString());
     },
 
-    async fetchTimetable() {
-      // let term = (this.date.getFullYear() - 1980) * 100 + (this.date.getMonth() < 6 ? 10 : 20);
-      let term = 4110;
+    async getCareers() {
+      let url = encodeURIComponent(`student/StudyList.asp`);
+
+      try {
+        let res = await http.get(".netlify/functions/getpage?url=" + url);
+        let element = document.createElement("html");
+        element.innerHTML = res.data;
+
+        let documentElements = element.getElementsByTagName("a");
+        let studentCareers = [];
+        let temp = 18;
+
+        for (let index = temp; index < documentElements.length; index++) {
+          temp++;
+          if (documentElements[temp].name == "CAR_0") {
+            break;
+          }
+        }
+
+        [...documentElements].slice(18, temp).forEach((e) => {
+          studentCareers.push(careers[e.innerText]);
+        });
+
+        return studentCareers;
+      } catch (err) {
+        // this.$store.dispatch("logout");
+        return null;
+      }
+    },
+
+    async fetchTimetable(studentCareer, term) {
       let url = encodeURIComponent(
-        `student/Week.asp?term=${term}&career=UGRD&dt=${this.date.getDate()}/${
+        `student/Week.asp?term=${term}&career=${studentCareer}&dt=${this.date.getDate()}/${
           this.date.getMonth() + 1
         }/${this.date.getFullYear()}`
       );
@@ -84,7 +117,7 @@ export default {
         let res = await http.get(".netlify/functions/getpage?url=" + url);
         return res.data;
       } catch (err) {
-        this.$store.dispatch("logout");
+        // this.$store.dispatch("logout");
         return null;
       }
     },
@@ -191,9 +224,23 @@ export default {
     },
 
     async loadTimetable() {
-      let tb = await this.fetchTimetable();
-      if (tb != null) {
-        this.timetable = this.parseTimetable(tb);
+      let studentCareers = await this.getCareers();
+      let term =
+        (this.date.getFullYear() - 1980) * 100 +
+        (this.date.getMonth() < 6 ? 10 : 20);
+
+      let tbs = [];
+
+      for (const studentCareer of studentCareers) {
+        let tb = await this.fetchTimetable(studentCareer, term);
+        if (tb != null) {
+          tbs.push(tb);
+        }
+      }
+
+      if (tbs != []) {
+        hues = {};
+        this.timetable = this.parseTimetable(tbs[0]);
       }
     },
 

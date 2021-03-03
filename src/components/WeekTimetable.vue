@@ -17,7 +17,8 @@
       class="time-cell"
       :style="{ 'grid-row': time + 1, 'grid-column': 1 }"
     >
-      <p>{{ to12HourTime(earliestTime + time - 1) }}</p>
+      <p>{{ to12HourTime(earliestTime + time - 1).join("") }}</p>
+      <!-- <p class="show-on-mobile hide-on-desktop">{{ to12HourTime(earliestTime + time - 1)[0] }}<br>{{ to12HourTime(earliestTime + time - 1)[1] }}</p> -->
     </div>
     <div
       v-for="event in table"
@@ -60,8 +61,8 @@ export default {
   methods: {
     to12HourTime(time) {
       return time >= 12
-        ? String(((time - 1) % 12) + 1) + "pm"
-        : String(time) + "am";
+        ? [String(((time - 1) % 12) + 1), "pm"]
+        : [String(time), "am"];
     },
     clickEvent(event) {
       this.$buefy.modal.open({
@@ -88,6 +89,7 @@ export default {
 }
 
 .event-cell {
+  cursor: pointer;
   border-radius: 0.25rem;
   margin: 5px;
   padding: 10px;
