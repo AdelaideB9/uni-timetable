@@ -1,47 +1,49 @@
 <template>
   <div id="timetable">
     <div class="container">
-      <b-dropdown aria-role="list" style="float: left">
-        <template #trigger>
-          <b-button icon-left="bars" />
-        </template>
-        <b-dropdown-item aria-role="listitem">
-          <b-icon icon="cog"></b-icon>
-          Settings
-        </b-dropdown-item>
-        <b-dropdown-item
-          aria-role="listitem"
-          @click="$store.dispatch('logout')"
-          value="logout"
-        >
-          <b-icon icon="sign-out-alt"></b-icon>
-          Logout
-        </b-dropdown-item>
-      </b-dropdown>
-      <b-field grouped position="is-centered">
-        <b-button
-          class="control"
-          icon-left="angle-left"
-          @click="changeWeek(-1)"
-        >
-        </b-button>
-        <b-datepicker
-          @input="loadTimetable()"
-          placeholder="Type or select a date..."
-          icon="calendar"
-          v-model="date"
-          :unselectable-days-of-week="[0, 6]"
-          ref="picker"
-          editable
-        >
-        </b-datepicker>
-        <b-button
-          class="control"
-          icon-left="angle-right"
-          @click="changeWeek(1)"
-        >
-        </b-button>
-      </b-field>
+      <nav>
+        <b-dropdown aria-role="list" style="float: left">
+          <template #trigger>
+            <b-button icon-left="bars" />
+          </template>
+          <b-dropdown-item aria-role="listitem">
+            <b-icon icon="cog"></b-icon>
+            Settings
+          </b-dropdown-item>
+          <b-dropdown-item
+            aria-role="listitem"
+            @click="$store.dispatch('logout')"
+            value="logout"
+          >
+            <b-icon icon="sign-out-alt"></b-icon>
+            Logout
+          </b-dropdown-item>
+        </b-dropdown>
+        <b-field grouped position="is-centered">
+          <b-button
+            class="control"
+            icon-left="angle-left"
+            @click="changeWeek(-1)"
+          >
+          </b-button>
+          <b-datepicker
+            @input="loadTimetable()"
+            placeholder="Type or select a date..."
+            icon="calendar"
+            v-model="date"
+            :unselectable-days-of-week="[0, 6]"
+            ref="picker"
+            editable
+          >
+          </b-datepicker>
+          <b-button
+            class="control"
+            icon-left="angle-right"
+            @click="changeWeek(1)"
+          >
+          </b-button>
+        </b-field>
+      </nav>
 
       <WeekTimetable
         :table="timetable.classes"

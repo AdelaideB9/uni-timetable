@@ -1,7 +1,7 @@
 <template>
   <div
     id="table"
-    :style="`grid-template-rows: repeat(${
+    :style="`grid-template-rows: [days] min-content repeat(${
       latestTime - earliestTime + 1
     }, 1fr);`"
   >
@@ -99,6 +99,15 @@ export default {
 
 .day-cell {
   text-align: center;
+  position: sticky;
+  top: 0;
+  padding: 10px 0;
+  background-color: white;
+  border-bottom: #dbdbdb 1px solid;
+}
+
+.time-cell {
+  border-right: #dbdbdb 1px solid;
 }
 
 .hide-on-desktop {
