@@ -6,7 +6,7 @@
       <router-link to="/login">Login</router-link> |
       <router-link to="/timetable">Timetable</router-link>
     </div> -->
-    <TopProgress :trickleSpeed="50"></TopProgress>
+    <TopProgress :trickleSpeed="70"></TopProgress>
     <router-view />
   </div>
 </template>
