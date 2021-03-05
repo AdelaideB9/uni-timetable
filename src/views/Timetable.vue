@@ -2,7 +2,7 @@
   <div id="timetable">
     <div class="container">
       <nav>
-        <b-dropdown aria-role="list" style="float: left">
+        <b-dropdown aria-role="list" class="menu-button">
           <template #trigger>
             <b-button icon-left="bars" />
           </template>
@@ -54,6 +54,32 @@
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.menu-button {
+  float: left;
+}
+#table {
+  min-height: 90vh;
+}
+@media only screen and (min-device-width: 480px) {
+  #table {
+    min-height: 92vh;
+  }
+
+  nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 8vh;
+  }
+
+  .menu-button {
+    left: 0;
+    position: absolute;
+  }
+}
+</style>
 
 <script>
 import WeekTimetable from "@/components/WeekTimetable.vue";

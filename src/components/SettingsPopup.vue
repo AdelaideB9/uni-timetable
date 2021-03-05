@@ -3,7 +3,7 @@
     <form action="">
       <div class="modal-card" style="width: auto">
         <header class="modal-card-head">
-          <p style="text-align: center;" class="modal-card-title">
+          <p style="text-align: center" class="modal-card-title">
             {{ c.name }} <br />
             {{ c.classType }}
           </p>
@@ -27,7 +27,7 @@
 
 <script>
 export default {
-  name: "SettingsPopup"
+  name: "SettingsPopup",
 };
 </script>
 

@@ -23,10 +23,18 @@
       </div>
     </form> -->
     <form action="">
-      <div class="modal-card">
+      <div
+        class="modal-card"
+        :style="{
+          'background-color': `hsl(${c.colour}, 100%, 80%)`,
+        }"
+      >
         <button type="button" class="delete" @click="$emit('close')" />
         <div class="modal-text">
-          <b> {{ c.name }} </b><br />
+          <p>
+            <b> {{ c.name }} </b>
+          </p>
+          <br />
           <p><b>Class</b>: {{ c.course }}, {{ c.type }}</p>
           <p><b>Room</b>: {{ c.room.join("/") }}</p>
           <p><b>Duration</b>: {{ timeToText(c.duration) }}</p>
@@ -43,11 +51,11 @@
   box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
     0 0px 0 1px rgba(10, 10, 10, 0.02);
   border-radius: 0.25rem;
-  padding: 0 50px;
+  padding: 0 40px;
 }
 
 .modal-text {
-  padding: 50px 0;
+  padding: 40px 0;
 }
 
 .delete {

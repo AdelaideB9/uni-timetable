@@ -10,15 +10,21 @@
       class="day-cell"
       :style="{ 'grid-row': 1, 'grid-column': i + 2 }"
     >
-      <b>{{ day }}</b>
+      <b>{{ getDayFormat(day) }}</b>
     </div>
     <div
       v-for="time in latestTime - earliestTime + 1"
       class="time-cell"
       :style="{ 'grid-row': time + 1, 'grid-column': 1 }"
     >
-      <p>{{ to12HourTime(earliestTime + time - 1).join("") }}</p>
-      <!-- <p class="show-on-mobile hide-on-desktop">{{ to12HourTime(earliestTime + time - 1)[0] }}<br>{{ to12HourTime(earliestTime + time - 1)[1] }}</p> -->
+      <p class="hide-on-mobile">
+        {{ to12HourTime(earliestTime + time - 1).join("") }}
+      </p>
+      <p class="show-on-mobile hide-on-desktop">
+        {{ to12HourTime(earliestTime + time - 1)[0] }}<br />{{
+          to12HourTime(earliestTime + time - 1)[1]
+        }}
+      </p>
     </div>
     <div
       v-for="event in table"
@@ -38,7 +44,10 @@
       <p class="show-on-mobile hide-on-desktop">
         <b>{{ event.course }}</b>
       </p>
-      <p>{{ event.type }} <span class="hide-on-mobile">({{ event.room[0] }})</span></p>
+      <p>
+        {{ event.type }}
+        <span class="hide-on-mobile">({{ event.room[0] }})</span>
+      </p>
     </div>
   </div>
 </template>
@@ -64,6 +73,9 @@ export default {
         ? [String(((time - 1) % 12) + 1), "pm"]
         : [String(time), "am"];
     },
+    getDayFormat(day) {
+      return window.screen.width < 480 ? day.slice(0, 3) : day;
+    },
     clickEvent(event) {
       this.$buefy.modal.open({
         parent: this,
@@ -80,7 +92,6 @@ export default {
 
 <style lang="scss" scoped>
 #table {
-  min-height: 90vh;
   display: grid;
   grid-template-columns:
     [times] 4em
@@ -107,6 +118,9 @@ export default {
 }
 
 .time-cell {
+  position: sticky;
+  left: 0;
+  background-color: white;
   border-right: #dbdbdb 1px solid;
 }
 
@@ -129,8 +143,12 @@ export default {
 
   #table {
     grid-template-columns:
-      [times] 3em
+      [times] 2em
       repeat(5, 1fr);
+  }
+
+  .time-cell {
+    text-align: center;
   }
 }
 </style>
