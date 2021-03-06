@@ -23,12 +23,7 @@
       </div>
     </form> -->
     <form action="">
-      <div
-        class="modal-card"
-        :style="{
-          'background-color': `hsl(${c.colour}, 100%, 80%)`,
-        }"
-      >
+      <div class="modal-card">
         <button type="button" class="delete" @click="$emit('close')" />
         <div class="modal-text">
           <p>
@@ -72,12 +67,12 @@ export default {
   methods: {
     timeToText(time) {
       return time <= 1 ? String(time) + " hour" : String(time) + " hours";
-    },
+    }
   },
   computed: {
-    c: function () {
+    c: function() {
       return this.event;
-    },
-  },
+    }
+  }
 };
 </script>
