@@ -93,7 +93,8 @@ let hues = {};
 let careers = {
   Undergraduate: "UGRD",
   "Non Award": "NAWD",
-  "Undergraduate Law (LLB)": "ULAW"
+  "Undergraduate Law (LLB)": "ULAW",
+  Postgraduate: "PGRD"
 };
 
 export default {
