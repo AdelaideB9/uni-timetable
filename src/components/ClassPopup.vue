@@ -30,9 +30,9 @@
             <b> {{ c.name }} </b>
           </p>
           <br />
-          <p><b>Class</b>: {{ c.course }}, {{ c.type }}</p>
-          <p><b>Room</b>: {{ c.room.join("/") }}</p>
-          <p><b>Duration</b>: {{ timeToText(c.duration) }}</p>
+          <p>{{ c.course }}, {{ c.type }}</p>
+          <p>{{ c.room.join("/") }}</p>
+          <p>{{ timeToText(c.duration) }}</p>
         </div>
       </div>
     </form>
@@ -42,7 +42,7 @@
 <style lang="scss" scoped>
 .modal-card {
   width: 375px;
-  background-color: #d4ff99;
+  background-color: white;
   box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
     0 0px 0 1px rgba(10, 10, 10, 0.02);
   border-radius: 0.25rem;
