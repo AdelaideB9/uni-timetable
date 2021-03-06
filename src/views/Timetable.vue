@@ -93,7 +93,7 @@ let hues = {};
 let careers = {
   Undergraduate: "UGRD",
   "Non Award": "NAWD",
-  "Undergraduate Law (LLB)": "ULAW",
+  "Undergraduate Law (LLB)": "ULAW"
 };
 
 export default {
@@ -112,20 +112,23 @@ export default {
         let element = document.createElement("html");
         element.innerHTML = res.data;
 
-        let documentElements = element.getElementsByTagName("a");
+        let documentElements = element.getElementsByClassName("tbdr");
         let studentCareers = [];
-        let temp = 18;
 
-        for (let index = temp; index < documentElements.length; index++) {
-          temp++;
-          if (documentElements[temp].name == "CAR_0") {
-            break;
+        for (var table of documentElements) {
+          // temp++;
+          // if (documentElements[temp].name == "CAR_0") {
+          //   break;
+          // }
+          let career = table.getElementsByTagName("td")[0];
+          if (career != undefined) {
+            studentCareers.push(careers[career.innerText]);
           }
         }
 
-        [...documentElements].slice(18, temp).forEach((e) => {
-          studentCareers.push(careers[e.innerText]);
-        });
+        // [...documentElements].slice(18, temp).forEach(e => {
+        //   studentCareers.push(careers[e.innerText]);
+        // });
 
         return studentCareers;
       } catch (err) {
@@ -136,9 +139,8 @@ export default {
 
     async fetchTimetable(studentCareer, term) {
       let url = encodeURIComponent(
-        `student/Week.asp?term=${term}&career=${studentCareer}&dt=${this.date.getDate()}/${
-          this.date.getMonth() + 1
-        }/${this.date.getFullYear()}`
+        `student/Week.asp?term=${term}&career=${studentCareer}&dt=${this.date.getDate()}/${this.date.getMonth() +
+          1}/${this.date.getFullYear()}`
       );
 
       try {
@@ -166,7 +168,7 @@ export default {
           duration: 5000,
           message: toast_message,
           position: "is-bottom",
-          type: "is-danger",
+          type: "is-danger"
         });
       }
 
@@ -220,13 +222,13 @@ export default {
           room: textSeperated[3].trim().split("/"),
           type: textSeperated[2].split("(")[0].trim(),
           classNumber: Number(textSeperated[2].split("(")[1].substr(0, 5)),
-          colour: this.genColours(name),
+          colour: this.genColours(name)
         });
       }
       return {
         classes: parsedClasses,
         earliestTime: earliestTime,
-        latestTime: latestTime,
+        latestTime: latestTime
       };
     },
 
@@ -266,11 +268,32 @@ export default {
         }
       }
 
-      if (tbs != []) {
-        hues = {};
-        this.timetable = this.parseTimetable(tbs[0]);
+      let classes = [];
+      hues = {};
+      let earliestTime = 999;
+      let latestTime = 0;
+
+      for (const tb of tbs) {
+        let result = this.parseTimetable(tb);
+        classes = classes.concat(result.classes);
+        if (earliestTime > result.earliestTime) {
+          earliestTime = result.earliestTime;
+        }
+        if (latestTime < result.latestTime) {
+          latestTime = result.latestTime;
+        }
       }
-    },
+
+      this.timetable = {
+        classes: classes,
+        earliestTime: earliestTime,
+        latestTime: latestTime
+      };
+      // if (tbs != []) {
+      //   hues = {};
+      //   this.timetable = this.parseTimetable(tbs[0]);
+      // }
+    }
 
     // openSettingsMenu() {
     //   this.$buefy.modal.open({
@@ -285,15 +308,15 @@ export default {
   data() {
     return {
       date: new Date(),
-      timetable: { classes: [], earliestTime: 0, latestTime: 0 },
+      timetable: { classes: [], earliestTime: 0, latestTime: 0 }
     };
   },
   mounted() {
     this.loadTimetable();
   },
   components: {
-    WeekTimetable,
+    WeekTimetable
     // SettingsPopup,
-  },
+  }
 };
 </script>

@@ -1,9 +1,11 @@
 <template>
   <div
     id="table"
-    :style="`grid-template-rows: [days] min-content repeat(${
-      latestTime - earliestTime + 1
-    }, 1fr);`"
+    :style="
+      `grid-template-rows: [days] min-content repeat(${latestTime -
+        earliestTime +
+        1}, 1fr);`
+    "
   >
     <div
       v-for="(day, i) in days"
@@ -31,11 +33,12 @@
       @click="clickEvent(event)"
       class="event-cell"
       :style="{
-        'grid-row': `${event.time - earliestTime + 2} / ${
-          event.time - earliestTime + event.duration + 2
-        }`,
+        'grid-row': `${event.time - earliestTime + 2} / ${event.time -
+          earliestTime +
+          event.duration +
+          2}`,
         'grid-column': event.day + 2,
-        'background-color': `hsl(${event.colour}, 100%, 80%)`,
+        'background-color': `hsl(${event.colour}, 100%, 80%)`
       }"
     >
       <p class="hide-on-mobile">
@@ -60,11 +63,11 @@ export default {
   props: {
     table: Array,
     earliestTime: Number,
-    latestTime: Number,
+    latestTime: Number
   },
   data() {
     return {
-      days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
     };
   },
   methods: {
@@ -83,10 +86,10 @@ export default {
         component: ClassPopup,
         hasModalCard: true,
         customClass: "custom-class custom-class-2",
-        trapFocus: true,
+        trapFocus: true
       });
-    },
-  },
+    }
+  }
 };
 </script>
 
