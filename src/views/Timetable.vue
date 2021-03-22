@@ -19,7 +19,7 @@
             Logout
           </b-dropdown-item>
         </b-dropdown>
-        <b-field grouped position="is-centered">
+        <b-field grouped position="is-centered" v-if="isOnline">
           <b-button
             class="control"
             icon-left="angle-left"
@@ -42,6 +42,10 @@
             @click="changeWeek(1)"
           >
           </b-button>
+        </b-field>
+
+        <b-field grouped position="is-centered" v-else>
+          Offline
         </b-field>
       </nav>
 
