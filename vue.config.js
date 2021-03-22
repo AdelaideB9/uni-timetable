@@ -60,7 +60,22 @@ module.exports = {
     workboxPluginMode: "GenerateSW",
     workboxOptions: {
       exclude: [/\.map$/, /_redirects/],
-      navigateFallback: "index.html"
+      navigateFallback: "index.html",
+      //swSrc: "src/service-worker.js",
+      //swDest: "service-worker.js",
+      runtimeCaching: [
+        {
+          urlPattern: new RegExp("netlify/functions"),
+          handler: "networkFirst",
+          options: {
+            networkTimeoutSeconds: 20,
+            cacheName: "api-cache",
+            cacheableResponse: {
+              statuses: [0, 200]
+            }
+          }
+        }
+      ]
     }
   }
 };
