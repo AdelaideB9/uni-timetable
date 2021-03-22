@@ -59,7 +59,8 @@ module.exports = {
     },
     workboxPluginMode: "GenerateSW",
     workboxOptions: {
-      exclude: [/\.map$/, /_redirects/]
+      exclude: [/\.map$/, /_redirects/],
+      navigateFallback: "index.html"
     }
   }
 };
