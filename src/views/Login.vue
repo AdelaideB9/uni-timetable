@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bg-img">
     <div class="login-container">
       <form class="box" @submit.prevent="login()">
         <b-field label="Student ID">
@@ -21,19 +21,48 @@
           </b-input>
         </b-field>
 
-        <b-button
-          style="margin-top: 20px"
-          native-type="submit"
-          label="Sign in"
-          type="is-primary is-light"
-          :loading="loading"
-        />
+        <b-field style="margin-top: 32px" grouped>
+          <b-button
+            expanded
+            native-type="submit"
+            label="Sign in"
+            type="is-primary is-light"
+            :loading="loading"
+          />
+          <p class="control" style="margin-left: 10px">
+            <b-button
+              icon-right="question"
+              type="is-light"
+              @click="$router.push('about')"
+            />
+          </p>
+        </b-field>
       </form>
     </div>
   </div>
 </template>
 
 <style>
+.bg-img {
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-img::before {
+  content: "";
+  position: absolute;
+  width: 110%;
+  height: 110%;
+  transform: translate(-5%, -5%);
+  z-index: -1;
+  filter: blur(10px);
+  background-image: url("~@/assets/background.jpg");
+  background-size: cover;
+  background-repeat: repeat;
+  background-position: center;
+  opacity: 0.5;
+}
+
 .login-container {
   height: 100vh;
   display: flex;
