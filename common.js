@@ -46,3 +46,10 @@ exports.angularDistance = function(a, b) {
   let phi = Math.abs(b - a) % 360;
   return phi > 180 ? 360 - phi : phi;
 };
+
+exports.to12HourTime = function(str) {
+  let time = parseInt(str.split(":")[0]);
+  return time >= 12
+    ? String(((time - 1) % 12) + 1) + ":00pm"
+    : String(time) + ":00am";
+};

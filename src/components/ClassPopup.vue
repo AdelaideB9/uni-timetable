@@ -13,7 +13,7 @@
           <p>
             <b>Class</b>: {{ c.course }}, {{ c.type }}
             <br />
-            <b>Room</b>: {{ c.room.join("/") }}
+            <b>Room</b>: {{ c.room }}
             <br />
             <b>Duration</b>: {{ timeToText(c.duration) }}
             <br />
@@ -27,12 +27,30 @@
         <button type="button" class="delete" @click="$emit('close')" />
         <div class="modal-text">
           <p>
-            <b> {{ c.name }} </b>
+            <b> {{ c.course }} </b>
+            <br />
+            {{ $common.to12HourTime(c["start_time"]) }} -
+            {{ $common.to12HourTime(c["end_time"]) }} ({{
+              timeToText(c.duration)
+            }})
+            <br />
+            {{ c.date }}
+            <br />
+            {{ c.type }}
           </p>
           <br />
-          <p>{{ c.course }}, {{ c.type }}</p>
-          <p>{{ c.room.join("/") }}</p>
-          <p>{{ timeToText(c.duration) }}</p>
+          <b>{{ c.room }}</b> ({{ c.building }})
+          <br />
+          {{ c["facility_description"] }}
+          <br />
+          <a
+            v-if="c.latitude != 0"
+            :href="
+              'https://maps.google.com/maps?q=' + c.latitude + ',' + c.longitude
+            "
+            target="_blank"
+            >Map</a
+          >
         </div>
       </div>
     </form>
@@ -66,7 +84,7 @@ export default {
   props: { event: Object },
   methods: {
     timeToText(time) {
-      return time <= 1 ? String(time) + " hour" : String(time) + " hours";
+      return time == 1 ? "1 hour" : String(time) + " hours";
     }
   },
   computed: {

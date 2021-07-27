@@ -5,6 +5,7 @@ import http from "@/services/http";
 import { ToastProgrammatic as Toast } from "buefy";
 import qs from "querystring";
 import cookie from "cookie";
+import _ from "lodash";
 
 Vue.use(Vuex);
 
@@ -12,11 +13,15 @@ let store = new Vuex.Store({
   state: {
     isLoggedIn: false,
     loading: 0,
-    loadingFailed: false
+    loadingFailed: false,
+    timetable: {}
   },
   mutations: {
     setLoggedIn(state, val) {
       if (typeof val == "boolean") state.isLoggedIn = val;
+    },
+    setTimetable(state, val) {
+      state.timetable = val;
     },
     START_LOADING: state => {
       state.loading++;
@@ -29,10 +34,33 @@ let store = new Vuex.Store({
     }
   },
   getters: {
-    loading: state => state.loading
+    loading: state => state.loading,
+    timetable: state => todayUTC => {
+      let result = [];
+      for (var i = 0; i < 5; i++) {
+        // Skip weekends
+        while (!(todayUTC.getDay() % 6)) {
+          todayUTC.setDate(todayUTC.getDate() + 1);
+        }
+
+        var today = todayUTC.toISOString().slice(0, 10);
+        result.push(state.timetable[today] || []);
+
+        todayUTC.setDate(todayUTC.getDate() + 1);
+      }
+      return result;
+    }
   },
   actions: {
-    async login(state, params) {
+    async getTimetable(state) {
+      try {
+        let res = await http.get(".netlify/functions/timetable");
+        state.commit("setTimetable", _.groupBy(res.data, "date"));
+      } catch (err) {
+        state.commit("logout");
+      }
+    },
+    async login(_state, params) {
       try {
         await http.post(
           ".netlify/functions/login",
@@ -53,12 +81,9 @@ let store = new Vuex.Store({
     },
     async logout() {
       let cookies = cookie.parse(document.cookie);
-      const cookieFilter = ["ASPSESSIONID", "CS92AA"];
+      const cookieFilter = ["connect.sid", "b47ab3a02bf2798d4506d9bb5a377bde"];
       for (const val in cookies) {
-        if (
-          val.indexOf(cookieFilter[0]) > -1 ||
-          val.indexOf(cookieFilter[1]) > -1
-        )
+        if (val.includes(cookieFilter[0]) || val.includes(cookieFilter[1]))
           document.cookie =
             val + "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
       }

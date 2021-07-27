@@ -36,7 +36,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   let cookies = {};
-  const cookieFilter = ["ASPSESSIONID", "CS92AA"];
+  const cookieFilter = ["connect.sid", "b47ab3a02bf2798d4506d9bb5a377bde"];
   if (document.cookie) cookies = cookie.parse(document.cookie);
 
   if (common.objectHasKeys(cookies, cookieFilter))

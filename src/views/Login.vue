@@ -42,7 +42,7 @@
   </div>
 </template>
 
-<style>
+<style lang="scss" scoped>
 .bg-img {
   position: relative;
   overflow: hidden;
@@ -99,5 +99,3 @@ export default {
   }
 };
 </script>
-
-<style lang="sass" scoped></style>

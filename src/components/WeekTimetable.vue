@@ -3,8 +3,7 @@
     id="table"
     :style="
       `grid-template-rows: [days] min-content repeat(${latestTime -
-        earliestTime +
-        1}, 1fr);`
+        earliestTime}, 1fr);`
     "
   >
     <div
@@ -15,16 +14,16 @@
       <b>{{ getDayFormat(day) }}</b>
     </div>
     <div
-      v-for="time in latestTime - earliestTime + 1"
+      v-for="time in latestTime - earliestTime"
       class="time-cell"
       :style="{ 'grid-row': time + 1, 'grid-column': 1 }"
     >
       <p class="hide-on-mobile">
-        {{ to12HourTime(earliestTime + time - 1).join("") }}
+        {{ getTimeString(earliestTime + time - 1).join("") }}
       </p>
       <p class="show-on-mobile hide-on-desktop">
-        {{ to12HourTime(earliestTime + time - 1)[0] }}<br />{{
-          to12HourTime(earliestTime + time - 1)[1]
+        {{ getTimeString(earliestTime + time - 1)[0] }}<br />{{
+          getTimeString(earliestTime + time - 1)[1]
         }}
       </p>
     </div>
@@ -33,24 +32,29 @@
       @click="clickEvent(event)"
       class="event-cell"
       :style="{
-        'grid-row': `${event.time - earliestTime + 2} / ${event.time -
+        'grid-row': `${event.time - earliestTime + 2} / ${event.time +
+          event.duration -
           earliestTime +
-          event.duration +
           2}`,
         'grid-column': event.day + 2,
         'background-color': `hsl(${event.colour}, 100%, 80%)`
       }"
     >
       <p class="hide-on-mobile">
-        <b>{{ event.name }}</b>
+        <b>{{ event.course }}</b>
       </p>
       <p class="show-on-mobile hide-on-desktop">
         <b>{{ event.course }}</b>
       </p>
       <p>
-        {{ event.type }}
-        <span class="hide-on-mobile">({{ event.room[0] }})</span>
+        {{ $common.to12HourTime(event["start_time"]) }}
+        ({{ timeToText(event.duration) }})
       </p>
+      <p>
+        <b>{{ event.room }}</b> ({{ event.building }})
+        <!--<span class="hide-on-mobile">({{ event.room }})</span>-->
+      </p>
+      {{ event.type }}
     </div>
   </div>
 </template>
@@ -63,19 +67,10 @@ export default {
   props: {
     table: Array,
     earliestTime: Number,
-    latestTime: Number
-  },
-  data() {
-    return {
-      days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
-    };
+    latestTime: Number,
+    offset: Number
   },
   methods: {
-    to12HourTime(time) {
-      return time >= 12
-        ? [String(((time - 1) % 12) + 1), "pm"]
-        : [String(time), "am"];
-    },
     getDayFormat(day) {
       return window.screen.width < 480 ? day.slice(0, 3) : day;
     },
@@ -88,6 +83,30 @@ export default {
         customClass: "custom-class custom-class-2",
         trapFocus: true
       });
+    },
+    getTimeString(time) {
+      return time >= 12
+        ? [String(((time - 1) % 12) + 1) + ":00", "pm"]
+        : [String(time) + ":00", "am"];
+    },
+    timeToText(time) {
+      return time == 1 ? "1 hour" : String(time) + " hours";
+    }
+  },
+  computed: {
+    days() {
+      return [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ].slice(this.offset, this.offset + 5);
     }
   }
 };
@@ -97,7 +116,7 @@ export default {
 #table {
   display: grid;
   grid-template-columns:
-    [times] 4em
+    [times] 6em
     repeat(5, 1fr);
   font-size: 12px;
 }
@@ -123,6 +142,8 @@ export default {
 .time-cell {
   position: sticky;
   left: 0;
+  text-align: right;
+  padding-right: 10px;
   background-color: white;
   border-right: #dbdbdb 1px solid;
 }
