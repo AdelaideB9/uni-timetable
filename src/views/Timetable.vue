@@ -113,7 +113,7 @@ export default {
         for (const val in hues) {
           if (val == name) return hues[name];
 
-          if (val != name && common.angularDistance(hues[val], hue) < 50)
+          if (val != name && common.angularDistance(hues[val], hue) < 40)
             validColour = false;
         }
 

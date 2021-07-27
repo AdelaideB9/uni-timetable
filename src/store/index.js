@@ -57,7 +57,7 @@ let store = new Vuex.Store({
         let res = await http.get("api/timetable");
         state.commit("setTimetable", _.groupBy(res.data, "date"));
       } catch (err) {
-        state.commit("logout");
+        state.dispatch("logout");
       }
     },
     async login(_state, params) {
