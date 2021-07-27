@@ -19,7 +19,7 @@
             Logout
           </b-dropdown-item>
         </b-dropdown>
-        <b-field grouped position="is-centered" v-if="isOnline">
+        <b-field grouped position="is-centered">
           <b-button
             class="control"
             icon-left="angle-left"
@@ -42,10 +42,6 @@
             @click="changeDay(1)"
           >
           </b-button>
-        </b-field>
-
-        <b-field grouped position="is-centered" v-else>
-          Offline
         </b-field>
       </nav>
 
@@ -100,7 +96,7 @@ export default {
   methods: {
     changeDay(direction) {
       this.date.setDate(this.date.getDate() + direction);
-      while(!(this.date.getDay() % 6)) {
+      while (!(this.date.getDay() % 6)) {
         this.date.setDate(this.date.getDate() + direction);
       }
       this.$refs.picker.onChange(this.date.toString());

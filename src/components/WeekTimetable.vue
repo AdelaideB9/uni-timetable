@@ -167,12 +167,8 @@ export default {
 
   #table {
     grid-template-columns:
-      [times] 2em
+      [times] 5em
       repeat(5, 1fr);
-  }
-
-  .time-cell {
-    text-align: center;
   }
 }
 </style>
