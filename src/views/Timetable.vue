@@ -23,7 +23,7 @@
           <b-button
             class="control"
             icon-left="angle-left"
-            @click="changeWeek(-1)"
+            @click="changeDay(-1)"
           >
           </b-button>
           <b-datepicker
@@ -39,7 +39,7 @@
           <b-button
             class="control"
             icon-left="angle-right"
-            @click="changeWeek(1)"
+            @click="changeDay(1)"
           >
           </b-button>
         </b-field>
@@ -98,8 +98,11 @@ let hues = {};
 export default {
   name: "Timetable",
   methods: {
-    changeWeek(direction) {
-      this.date.setDate(this.date.getDate() + 7 * direction);
+    changeDay(direction) {
+      this.date.setDate(this.date.getDate() + direction);
+      while(!(this.date.getDay() % 6)) {
+        this.date.setDate(this.date.getDate() + direction);
+      }
       this.$refs.picker.onChange(this.date.toString());
     },
 
