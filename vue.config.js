@@ -65,7 +65,7 @@ module.exports = {
       //swDest: "service-worker.js",
       runtimeCaching: [
         {
-          urlPattern: new RegExp("netlify/functions"),
+          urlPattern: new RegExp("api"),
           handler: "networkFirst",
           options: {
             networkTimeoutSeconds: 20,
