@@ -12,7 +12,7 @@ app.use(express.urlencoded());
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
-app.post("/login", async (req, res) => {
+app.post("/api/login", async (req, res) => {
   try {
     const username = req.body.username;
     const password = req.body.password;
@@ -67,7 +67,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/timetable", async (req, res) => {
+app.get("/api/timetable", async (req, res) => {
   try {
     console.log(req.headers.cookie)
     let cookies = {};

@@ -54,7 +54,7 @@ let store = new Vuex.Store({
   actions: {
     async getTimetable(state) {
       try {
-        let res = await http.get(".netlify/functions/timetable");
+        let res = await http.get("api/timetable");
         state.commit("setTimetable", _.groupBy(res.data, "date"));
       } catch (err) {
         state.commit("logout");
@@ -63,7 +63,7 @@ let store = new Vuex.Store({
     async login(_state, params) {
       try {
         await http.post(
-          ".netlify/functions/login",
+          "api/login",
           qs.stringify({
             username: params.username,
             password: params.password
