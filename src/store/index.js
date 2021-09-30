@@ -43,7 +43,8 @@ let store = new Vuex.Store({
           todayUTC.setDate(todayUTC.getDate() + 1);
         }
 
-        var today = todayUTC.toISOString().slice(0, 10);
+        var tzoffset = new Date().getTimezoneOffset() * 60000;
+        var today = new Date(todayUTC - tzoffset).toISOString().slice(0, 10);
         result.push(state.timetable[today] || []);
 
         todayUTC.setDate(todayUTC.getDate() + 1);

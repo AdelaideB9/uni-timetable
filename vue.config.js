@@ -1,4 +1,7 @@
 module.exports = {
+  devServer: {
+    proxy: "http://localhost:8003"
+  },
   chainWebpack: config => {
     config.plugin("html").tap(args => {
       args[0].title = "Uni Timetable";
